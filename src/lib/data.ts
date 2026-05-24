@@ -1,5 +1,3 @@
-import "server-only";
-
 import { cache } from "react";
 import type { Category, Product, Review } from "@/lib/types";
 

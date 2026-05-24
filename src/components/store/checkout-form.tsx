@@ -34,6 +34,31 @@ export function CheckoutForm() {
     }
   }, [items, totals.total]);
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const formData = new FormData(e.currentTarget);
+    const name = String(formData.get("name") ?? "");
+    const phone = String(formData.get("phone") ?? "");
+    const city = String(formData.get("city") ?? "");
+    const area = String(formData.get("area") ?? "");
+    const address = String(formData.get("address") ?? "");
+    const note = String(formData.get("note") ?? "");
+
+    const pendingOrder = {
+      name,
+      phone,
+      city,
+      area,
+      address,
+      note,
+      items,
+      subtotal: totals.subtotal,
+      deliveryFee: totals.deliveryFee,
+      discount: totals.discount,
+      total: totals.total,
+    };
+    localStorage.setItem("cb_pending_order", JSON.stringify(pendingOrder));
+  };
+
   if (items.length === 0) {
     return (
       <div className="mx-auto grid min-h-[55vh] max-w-xl place-items-center px-4 py-20 text-center">
@@ -51,7 +76,7 @@ export function CheckoutForm() {
 
   return (
     <div className="mx-auto grid w-full max-w-6xl gap-6 px-3.5 py-6 sm:gap-8 sm:px-6 sm:py-10 lg:grid-cols-[1fr_380px] lg:px-8">
-      <form action={action} className="rounded-lg border bg-card p-4 sm:p-6">
+      <form action={action} onSubmit={handleSubmit} className="rounded-lg border bg-card p-4 sm:p-6">
         <div>
           <p className="text-sm font-medium uppercase text-muted-foreground">Cash on delivery</p>
           <h1 className="mt-2 text-3xl font-semibold">Complete your order</h1>

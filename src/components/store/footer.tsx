@@ -19,6 +19,11 @@ export function Footer() {
             Premium canvas bags built for everyday movement in Bangladesh: clean design, dependable carry,
             and a frictionless COD shopping experience.
           </p>
+          <div className="mt-4 flex gap-4 text-xs text-muted-foreground">
+            <Link href="/admin" className="hover:text-primary hover:underline transition-colors flex items-center gap-1">
+              🔐 Admin Panel
+            </Link>
+          </div>
         </div>
         <div className="grid gap-3">
           {trustItems.map((item) => (

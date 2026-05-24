@@ -9,9 +9,11 @@ import { motion } from "framer-motion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/components/providers/cart-provider";
+import { useStore } from "@/components/providers/store-provider";
 import type { Category } from "@/lib/types";
 
-export function Header({ categories }: { categories: Category[] }) {
+export function Header({ categories: _categories }: { categories?: Category[] }) {
+  const { categories } = useStore();
   const { itemCount } = useCart();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);

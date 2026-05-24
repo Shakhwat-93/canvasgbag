@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useStore } from "@/components/providers/store-provider";
 
 export function HeroSection() {
+  const { settings } = useStore();
   return (
     <section className="relative mx-auto w-full max-w-[1440px] px-4 pt-16 pb-8 sm:px-6 lg:px-8 overflow-hidden bg-white text-foreground">
       {/* SVG Clip Path Definitions for Folder Tabs */}
@@ -57,7 +59,7 @@ export function HeroSection() {
                 />
                 <text className="text-[7.5px] font-bold tracking-[0.12em] uppercase fill-current">
                   <textPath href="#textPathMobile" startOffset="0%">
-                    • learn about us • learn about us
+                    {settings.heroSubheadline}
                   </textPath>
                 </text>
               </svg>
@@ -123,7 +125,7 @@ export function HeroSection() {
                 />
                 <text className="text-[7px] font-bold tracking-[0.12em] uppercase fill-current">
                   <textPath href="#textPath" startOffset="0%">
-                    • learn about us through this video • learn about us through this video
+                    {settings.heroSubheadline}
                   </textPath>
                 </text>
               </svg>
@@ -141,9 +143,8 @@ export function HeroSection() {
 
           {/* Center: Headline */}
           <div className="text-center max-w-3xl w-full">
-            <h1 className="text-[1.75rem] sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black leading-[1.1] tracking-[-0.03em] text-[#121212]">
-              Elevate Your Style With <br className="hidden sm:inline" />
-              Bold Fashion
+            <h1 className="text-[1.75rem] sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black leading-[1.1] tracking-[-0.03em] text-[#121212] whitespace-pre-line">
+              {settings.heroHeadline}
             </h1>
           </div>
 
