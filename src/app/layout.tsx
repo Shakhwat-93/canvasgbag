@@ -3,9 +3,7 @@ import { Poppins } from "next/font/google";
 import { AnalyticsScripts } from "@/lib/analytics";
 import { categories } from "@/lib/data";
 import { AppProviders } from "@/components/providers/app-providers";
-import { AnnouncementBar } from "@/components/store/announcement-bar";
-import { Header } from "@/components/store/header";
-import { Footer } from "@/components/store/footer";
+import { StoreLayoutWrapper } from "@/components/store/store-layout-wrapper";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -44,14 +42,9 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <AnalyticsScripts />
         <AppProviders>
-          {/* Fixed top shell: announcement + floating navbar */}
-          <div className="fixed inset-x-0 top-0 z-50 flex flex-col">
-            <AnnouncementBar />
-            <Header categories={categories} />
-          </div>
-          {/* Page content pushed below the fixed shell (announcement ~38px + navbar ~72px) */}
-          <div className="flex-1 pt-[110px]">{children}</div>
-          <Footer />
+          <StoreLayoutWrapper categories={categories}>
+            {children}
+          </StoreLayoutWrapper>
         </AppProviders>
       </body>
     </html>
