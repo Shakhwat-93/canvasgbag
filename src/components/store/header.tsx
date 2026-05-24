@@ -4,25 +4,18 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, ShoppingBag, Home, Sparkles, Compass, Briefcase, Mail, Phone } from "lucide-react";
+import { Menu, ShoppingBag, Home, Sparkles, Compass, Briefcase, Mail, Phone, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/components/providers/cart-provider";
 import type { Category } from "@/lib/types";
-
-const navLinks = [
-  { label: "Home", href: "/", icon: Home },
-  { label: "Active Carry", href: "/category/everyday-totes", icon: Sparkles },
-  { label: "Training Gear", href: "/category/crossbody-bags", icon: Compass },
-  { label: "Travel Duffels", href: "/category/travel-canvas", icon: Briefcase },
-];
 
 export function Header({ categories }: { categories: Category[] }) {
   const { itemCount } = useCart();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isShopExpanded, setIsShopExpanded] = useState(false);
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -56,22 +49,72 @@ export function Header({ categories }: { categories: Category[] }) {
 
         {/* Desktop Nav */}
         <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => {
-            const active = isActive(link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`relative flex items-center gap-2 rounded-full px-4.5 py-2 text-sm font-semibold tracking-wide whitespace-nowrap transition-all duration-250 ${
-                  active
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
+          {/* Home */}
+          <Link
+            href="/"
+            className={`relative flex items-center gap-2 rounded-full px-4.5 py-2 text-sm font-semibold tracking-wide whitespace-nowrap transition-all duration-250 ${
+              isActive("/")
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
+            }`}
+          >
+            Home
+          </Link>
+
+          {/* Shop with Dropdown Submenu */}
+          <div className="group relative">
+            <button
+              className={`relative flex items-center gap-1.5 rounded-full px-4.5 py-2 text-sm font-semibold tracking-wide whitespace-nowrap transition-all duration-250 cursor-pointer ${
+                pathname.startsWith("/category/")
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
+              }`}
+            >
+              Shop
+              <ChevronDown className="h-3.5 w-3.5 opacity-75 group-hover:rotate-180 transition-transform duration-200" />
+            </button>
+
+            {/* Dropdown Panel */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none group-hover:pointer-events-auto">
+              <div className="w-[340px] rounded-2xl border border-white/60 bg-white/95 p-4 shadow-[0_16px_48px_rgba(0,0,0,0.12)] backdrop-blur-xl">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400 px-3.5 mb-2">
+                  Product Categories
+                </p>
+                <div className="grid gap-1">
+                  {categories.map((cat) => {
+                    const CatIcon = cat.slug === "everyday-totes" ? Sparkles : cat.slug === "crossbody-bags" ? Compass : Briefcase;
+                    return (
+                      <Link
+                        key={cat.id}
+                        href={`/category/${cat.slug}`}
+                        className="flex items-start gap-3 rounded-xl p-3.5 transition-all hover:bg-black/5 group/item text-left"
+                      >
+                        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary group-hover/item:bg-primary group-hover/item:text-primary-foreground transition-all">
+                          <CatIcon className="h-4.5 w-4.5" />
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-bold text-slate-900 leading-none">
+                            {cat.name}
+                          </h4>
+                          <p className="mt-1.5 text-xs text-muted-foreground font-medium leading-relaxed">
+                            {cat.description.substring(0, 50)}...
+                          </p>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Contact Us */}
+          <Link
+            href="#footer"
+            className="relative flex items-center gap-2 rounded-full px-4.5 py-2 text-sm font-semibold tracking-wide whitespace-nowrap transition-all duration-250 text-muted-foreground hover:bg-black/5 hover:text-foreground"
+          >
+            Contact Us
+          </Link>
         </nav>
 
         {/* Cart + Mobile Menu */}
@@ -130,34 +173,98 @@ export function Header({ categories }: { categories: Category[] }) {
                   }}
                   className="mt-6 flex flex-col gap-2.5"
                 >
-                  {navLinks.map((link) => {
-                    const active = isActive(link.href);
-                    const LinkIcon = link.icon;
-                    return (
-                      <motion.div
-                        key={link.href}
-                        variants={{
-                          hidden: { opacity: 0, x: 25 },
-                          show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 280, damping: 22 } }
-                        }}
-                      >
-                        <Link
-                          href={link.href}
-                          onClick={() => setIsOpen(false)}
-                          className={`flex items-center gap-3.5 rounded-xl px-4 py-3.5 text-base font-bold transition-all duration-200 active:scale-[0.98] ${
-                            active
-                              ? "bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(134,226,55,0.2)]"
-                              : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent hover:border-slate-100"
-                          }`}
-                        >
-                          <LinkIcon className={`h-5 w-5 shrink-0 ${active ? "text-primary-foreground" : "text-slate-400"}`} />
-                          <span>{link.label}</span>
-                          {active && <span className="ml-auto h-2 w-2 rounded-full bg-white animate-pulse" />}
-                        </Link>
-                      </motion.div>
-                    );
-                  })}
+                  {/* Home */}
+                  <motion.div
+                    variants={{
+                      hidden: { opacity: 0, x: 25 },
+                      show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 280, damping: 22 } }
+                    }}
+                  >
+                    <Link
+                      href="/"
+                      onClick={() => setIsOpen(false)}
+                      className={`flex items-center gap-3.5 rounded-xl px-4 py-3.5 text-base font-bold transition-all duration-200 active:scale-[0.98] ${
+                        isActive("/")
+                          ? "bg-primary text-primary-foreground shadow-[0_4px_12px_rgba(134,226,55,0.2)]"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent hover:border-slate-100"
+                      }`}
+                    >
+                      <Home className={`h-5 w-5 shrink-0 ${isActive("/") ? "text-primary-foreground" : "text-slate-400"}`} />
+                      <span>Home</span>
+                      {isActive("/") && <span className="ml-auto h-2 w-2 rounded-full bg-white animate-pulse" />}
+                    </Link>
+                  </motion.div>
 
+                  {/* Shop with Nested Collapsible Accordion */}
+                  <motion.div
+                    variants={{
+                      hidden: { opacity: 0, x: 25 },
+                      show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 280, damping: 22 } }
+                    }}
+                    className="flex flex-col"
+                  >
+                    <button
+                      onClick={() => setIsShopExpanded(!isShopExpanded)}
+                      className={`flex items-center gap-3.5 rounded-xl px-4 py-3.5 text-base font-bold transition-all duration-200 ${
+                        pathname.startsWith("/category/")
+                          ? "text-slate-900 bg-black/5"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                      }`}
+                    >
+                      <ShoppingBag className="h-5 w-5 shrink-0 text-slate-400" />
+                      <span>Shop</span>
+                      <ChevronDown className={`ml-auto h-4 w-4 text-slate-400 transition-transform duration-250 ${isShopExpanded ? "rotate-180" : ""}`} />
+                    </button>
+
+                    <motion.div
+                      initial={false}
+                      animate={{ height: isShopExpanded ? "auto" : 0, opacity: isShopExpanded ? 1 : 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className="overflow-hidden pl-7 flex flex-col gap-1.5 mt-1"
+                    >
+                      {categories.map((cat) => {
+                        const active = pathname === `/category/${cat.slug}`;
+                        const CatIcon = cat.slug === "everyday-totes" ? Sparkles : cat.slug === "crossbody-bags" ? Compass : Briefcase;
+                        return (
+                          <Link
+                            key={cat.id}
+                            href={`/category/${cat.slug}`}
+                            onClick={() => {
+                              setIsOpen(false);
+                              setIsShopExpanded(false);
+                            }}
+                            className={`flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-bold transition-colors ${
+                              active
+                                ? "bg-primary/10 text-slate-900 border-l-2 border-primary"
+                                : "text-slate-500 hover:text-slate-800"
+                            }`}
+                          >
+                            <CatIcon className="h-4 w-4 shrink-0 opacity-75 text-primary" />
+                            <span>{cat.name.replace(" & Rider Gear", "").replace(" & Laptop Bags", "").replace(" & Storage", "")}</span>
+                          </Link>
+                        );
+                      })}
+                    </motion.div>
+                  </motion.div>
+
+                  {/* Contact Us */}
+                  <motion.div
+                    variants={{
+                      hidden: { opacity: 0, x: 25 },
+                      show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 280, damping: 22 } }
+                    }}
+                  >
+                    <Link
+                      href="#footer"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-3.5 rounded-xl px-4 py-3.5 text-base font-bold transition-all duration-200 active:scale-[0.98] text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent hover:border-slate-100"
+                    >
+                      <Phone className="h-5 w-5 shrink-0 text-slate-400" />
+                      <span>Contact Us</span>
+                    </Link>
+                  </motion.div>
+
+                  {/* View Cart */}
                   <motion.div
                     variants={{
                       hidden: { opacity: 0, x: 25 },

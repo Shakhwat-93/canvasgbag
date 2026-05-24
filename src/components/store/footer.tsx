@@ -9,7 +9,7 @@ const trustItems = [
 
 export function Footer() {
   return (
-    <footer className="border-t bg-muted/30">
+    <footer id="footer" className="border-t bg-muted/30">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1.2fr_1fr] lg:px-8">
         <div>
           <Link href="/" className="text-lg font-semibold">
