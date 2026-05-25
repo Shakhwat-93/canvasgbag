@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, Heart, ShoppingBag } from "lucide-react";
@@ -26,6 +26,17 @@ export function MobileProductView({ product }: { product: Product }) {
       setImgIndex(variantIndex);
     }
   }, [variantId, variantIndex, product.images.length]);
+
+  // Autoplay Image Gallery
+  useEffect(() => {
+    if (product.images.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setImgIndex((prev) => (prev + 1) % product.images.length);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [product.images.length, imgIndex]);
 
   const currentImage = product.images[imgIndex] ?? product.images[0];
 

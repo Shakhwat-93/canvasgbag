@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -34,6 +34,17 @@ export function ProductClient({
 
   // Active Image State
   const [activeImgIndex, setActiveImgIndex] = useState(0);
+
+  // Autoplay Image Gallery
+  useEffect(() => {
+    if (product.images.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setActiveImgIndex((prev) => (prev + 1) % product.images.length);
+    }, 3000);
+
+    return () => clearInterval(timer);
+  }, [product.images.length, activeImgIndex]);
 
   // Selected Variant State
   const [variantId, setVariantId] = useState(product.variants?.[0]?.id ?? "");
