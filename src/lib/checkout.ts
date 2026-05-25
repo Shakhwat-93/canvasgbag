@@ -1,8 +1,10 @@
 import "server-only";
 
 import { z } from "zod";
+import { randomUUID } from "crypto";
 import { calculateCartTotals } from "@/lib/format";
 import { getSupabaseAdmin, hasSupabaseConfig } from "@/lib/supabase";
+import { getMysqlPool, hasMysqlConfig } from "@/lib/mysql";
 import type { CartItem, CheckoutForm } from "@/lib/types";
 
 export const checkoutSchema = z.object({
@@ -41,59 +43,118 @@ export async function createCodOrder(input: CheckoutInput) {
   const items = cartPayloadSchema.parse(input.items);
   const totals = calculateCartTotals(items);
 
-  if (!hasSupabaseConfig()) {
+  // 1. Try MySQL if configured
+  if (hasMysqlConfig()) {
+    const pool = getMysqlPool();
+    const orderId = randomUUID();
+
+    try {
+      // Insert order
+      await pool.query(
+        `INSERT INTO orders (id, customer_name, phone, city, area, address, note, status, payment_method, subtotal, delivery_fee, discount, total, attribution)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          orderId,
+          form.name,
+          form.phone,
+          form.city,
+          form.area,
+          form.address,
+          form.note ?? null,
+          "pending",
+          "cod",
+          totals.subtotal,
+          totals.deliveryFee,
+          totals.discount,
+          totals.total,
+          JSON.stringify({}),
+        ]
+      );
+
+      // Insert order items
+      for (const item of items) {
+        await pool.query(
+          `INSERT INTO order_items (order_id, product_id, variant_id, product_name, variant_name, unit_price, quantity, total)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          [
+            orderId,
+            item.productId,
+            item.variantId,
+            item.name,
+            item.variantName,
+            item.price,
+            item.quantity,
+            item.price * item.quantity,
+          ]
+        );
+      }
+
+      return {
+        id: orderId,
+        ...totals,
+        demoMode: false,
+      };
+    } catch (dbError: any) {
+      console.error("MySQL Insertion Error:", dbError);
+      throw new Error(`MySQL Database Error: ${dbError.message || dbError}`);
+    }
+  }
+
+  // 2. Try Supabase fallback if configured
+  if (hasSupabaseConfig()) {
+    const supabase = getSupabaseAdmin();
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .insert({
+        customer_name: form.name,
+        phone: form.phone,
+        city: form.city,
+        area: form.area,
+        address: form.address,
+        note: form.note ?? null,
+        status: "pending",
+        payment_method: "cod",
+        subtotal: totals.subtotal,
+        delivery_fee: totals.deliveryFee,
+        discount: totals.discount,
+        total: totals.total,
+        attribution: {},
+      })
+      .select("id")
+      .single();
+
+    if (orderError || !order) {
+      throw new Error(orderError?.message ?? "Could not create order.");
+    }
+
+    const { error: itemsError } = await supabase.from("order_items").insert(
+      items.map((item) => ({
+        order_id: order.id,
+        product_id: item.productId,
+        variant_id: item.variantId,
+        product_name: item.name,
+        variant_name: item.variantName,
+        unit_price: item.price,
+        quantity: item.quantity,
+        total: item.price * item.quantity,
+      }))
+    );
+
+    if (itemsError) {
+      throw new Error(itemsError.message);
+    }
+
     return {
-      id: `demo-${Date.now().toString(36)}`,
+      id: order.id as string,
       ...totals,
-      demoMode: true,
+      demoMode: false,
     };
   }
 
-  const supabase = getSupabaseAdmin();
-  const { data: order, error: orderError } = await supabase
-    .from("orders")
-    .insert({
-      customer_name: form.name,
-      phone: form.phone,
-      city: form.city,
-      area: form.area,
-      address: form.address,
-      note: form.note ?? null,
-      status: "pending",
-      payment_method: "cod",
-      subtotal: totals.subtotal,
-      delivery_fee: totals.deliveryFee,
-      discount: totals.discount,
-      total: totals.total,
-      attribution: {},
-    })
-    .select("id")
-    .single();
-
-  if (orderError || !order) {
-    throw new Error(orderError?.message ?? "Could not create order.");
-  }
-
-  const { error: itemsError } = await supabase.from("order_items").insert(
-    items.map((item) => ({
-      order_id: order.id,
-      product_id: item.productId,
-      variant_id: item.variantId,
-      product_name: item.name,
-      variant_name: item.variantName,
-      unit_price: item.price,
-      quantity: item.quantity,
-      total: item.price * item.quantity,
-    }))
-  );
-
-  if (itemsError) {
-    throw new Error(itemsError.message);
-  }
-
+  // 3. Fallback to Demo Mode
   return {
-    id: order.id as string,
+    id: `demo-${Date.now().toString(36)}`,
     ...totals,
-    demoMode: false,
+    demoMode: true,
   };
 }
