@@ -47,9 +47,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${hindSiliguri.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
-      <body className="flex min-h-full flex-col">
+      <body className={`${geistSans.variable} ${geistMono.variable} ${hindSiliguri.variable} font-sans flex min-h-full flex-col`}>
         <AnalyticsScripts />
         <AppProviders>
           <StoreLayoutWrapper categories={categories}>
