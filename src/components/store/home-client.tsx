@@ -124,7 +124,7 @@ export function HomeClient() {
           <div className="flex items-center justify-between border-b border-slate-200 pb-3.5 mb-8">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-6 bg-primary rounded-sm transition-colors duration-300" />
-              <h2 className="text-lg md:text-xl font-black text-slate-900">আমাদের সকল পণ্য</h2>
+              <h2 className="text-lg md:text-xl font-semibold text-slate-900">আমাদের সকল পণ্য</h2>
             </div>
             <Link href={`/category/${categories[0]?.slug || 'everyday-totes'}`} className="text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-wider">
               View All
@@ -185,7 +185,7 @@ export function HomeClient() {
       {/* Promo banner block controlled page-wise */}
       <section className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="rounded-2xl border-2 border-primary bg-primary/10 p-8 text-center sm:p-12 transition-colors duration-300">
-          <span className="bg-primary text-primary-foreground text-[10px] font-extrabold uppercase tracking-[0.1em] px-3.5 py-1.5 rounded-full mb-4 inline-flex shadow-sm transition-colors duration-300">{settings.promoTitle}</span>
+          <span className="bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-[0.1em] px-3.5 py-1.5 rounded-full mb-4 inline-flex shadow-sm transition-colors duration-300">{settings.promoTitle}</span>
           <h2 className="mt-3 text-3xl font-semibold">{settings.promoHeadline}</h2>
           <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
             {settings.promoDescription}

@@ -46,7 +46,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
           priority={priority}
         />
         {product.badge && (
-          <span className="absolute left-2.5 top-2.5 bg-primary text-primary-foreground text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm transition-colors duration-300">
+          <span className="absolute left-2.5 top-2.5 bg-primary text-primary-foreground text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-sm transition-colors duration-300">
             {product.badge}
           </span>
         )}
@@ -54,12 +54,12 @@ export function ProductCard({ product, priority = false }: { product: Product; p
 
       <div className="p-3 flex-1 flex flex-col justify-between gap-3">
         <div className="space-y-1">
-          <Link href={`/product/${product.slug}`} className="block text-xs md:text-sm font-bold text-slate-800 hover:text-primary transition-colors line-clamp-2 min-h-[34px] leading-tight text-left">
+          <Link href={`/product/${product.slug}`} className="block text-xs md:text-sm font-semibold text-slate-800 hover:text-primary transition-colors line-clamp-2 min-h-[34px] leading-tight text-left">
             {product.name}
           </Link>
           
           <div className="flex flex-wrap items-baseline gap-2 pt-0.5 justify-start">
-            <span className="font-extrabold text-sm md:text-base text-primary transition-colors duration-300">
+            <span className="font-bold text-sm md:text-base text-primary transition-colors duration-300">
               {formatCurrency(product.price)}
             </span>
             {product.compareAtPrice && (
@@ -73,7 +73,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
         {/* Action Buttons Stacked */}
         <div className="space-y-1.5 pt-1 w-full">
           <Link href={`/product/${product.slug}`} className="block w-full">
-            <button className="w-full h-9 rounded-lg bg-[#1E293B] hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm">
+            <button className="w-full h-9 rounded-lg bg-[#1E293B] hover:bg-slate-800 text-white font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm">
               <Eye className="w-3.5 h-3.5" />
               View Product
             </button>
@@ -81,7 +81,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
 
           <button
             onClick={handleOrderNow}
-            className="w-full h-9 rounded-lg bg-primary text-primary-foreground hover:opacity-90 font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
+            className="w-full h-9 rounded-lg bg-primary text-primary-foreground hover:opacity-90 font-semibold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-sm"
           >
             <Zap className="w-3.5 h-3.5 fill-current" />
             Order Now
