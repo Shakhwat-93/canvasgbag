@@ -95,11 +95,6 @@ export function HeroSection() {
 
         {/* Column 3 - Center */}
         <div className="flex flex-col items-center gap-2 sm:gap-6 mt-0">
-          {/* Decorative Logo Icon */}
-          <div className="w-6 h-6 sm:w-11 sm:h-11 flex items-center justify-center bg-transparent border border-black/10 rounded-full text-foreground/75 font-semibold text-[10px] sm:text-sm hover:rotate-45 transition-transform duration-500">
-            🎛
-          </div>
-
           {/* Center Yellow Card */}
           <div
             className="relative w-full aspect-[3/3.4] rounded-lg sm:rounded-[2rem] overflow-hidden bg-[#FFCC00] transition-all duration-500 hover:scale-[1.02] cursor-pointer group"
