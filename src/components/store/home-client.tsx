@@ -164,16 +164,16 @@ export function HomeClient() {
         <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="grid gap-5 md:grid-cols-3">
             {reviews.map((review) => (
-              <figure key={review.id} className="rounded-xl border border-black/10 bg-white/40 p-5 backdrop-blur-sm">
+              <figure key={review.id} className="rounded-2xl bg-white p-6 shadow-sm border border-slate-100/60 text-slate-800">
                 <div className="flex gap-1">
                   {Array.from({ length: review.rating }).map((_, index) => (
-                    <Star key={index} className="h-4 w-4 fill-primary-foreground text-primary-foreground" />
+                    <Star key={index} className="h-4 w-4 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <blockquote className="mt-4 text-sm leading-7 text-primary-foreground/85">
+                <blockquote className="mt-4 text-sm leading-6 text-slate-600 font-medium">
                   &ldquo;{review.quote}&rdquo;
                 </blockquote>
-                <figcaption className="mt-4 text-sm font-semibold text-primary-foreground">
+                <figcaption className="mt-4 text-xs font-bold text-slate-800">
                   {review.author} · {review.location}
                 </figcaption>
               </figure>
