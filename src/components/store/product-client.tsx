@@ -184,10 +184,10 @@ export function ProductClient({
             </div>
 
             <div className="border-t border-slate-100 pt-5 space-y-3">
-              <p className="text-xs font-black text-slate-400 uppercase tracking-wider">🔸 প্রোডাক্টের বৈশিষ্ট্য:</p>
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">🔸 প্রোডাক্টের বৈশিষ্ট্য:</p>
               <div className="space-y-2">
                 {product.benefits.slice(0, 3).map((benefit) => (
-                  <div key={benefit} className="flex items-start gap-2.5 text-xs font-bold text-slate-600">
+                  <div key={benefit} className="flex items-start gap-2.5 text-sm font-semibold text-slate-800 leading-relaxed">
                     <span className="w-4.5 h-4.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center shrink-0 mt-0.5">
                       <Check className="w-2.5 h-2.5 stroke-[3.5]" />
                     </span>
@@ -200,7 +200,7 @@ export function ProductClient({
                   const target = document.getElementById("details-tabs");
                   if (target) target.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="text-xs font-black text-primary hover:underline cursor-pointer"
+                className="text-xs font-bold text-primary hover:underline cursor-pointer"
               >
                 বিস্তারিত
               </button>
@@ -303,26 +303,26 @@ export function ProductClient({
             </div>
 
             {/* Dashed Trust info box */}
-            <div className="border-2 border-dashed border-slate-200/80 bg-slate-50/50 p-5 rounded-2xl space-y-4 text-xs font-semibold text-slate-600 leading-relaxed shadow-[inset_0_2px_4px_rgba(0,0,0,0.01)]">
+            <div className="border-2 border-dashed border-slate-200/80 bg-slate-50/50 p-5 rounded-2xl space-y-4 text-xs font-semibold text-slate-700 leading-relaxed shadow-[inset_0_2px_4px_rgba(0,0,0,0.01)]">
               <div className="space-y-1">
-                <p className="text-slate-800 font-extrabold flex items-center gap-1.5">
-                  🛵 ডেলিভারি চার্জ:
+                <p className="text-slate-900 font-bold text-sm flex items-center gap-1.5">
+                  🛵  ডেলিভারি চার্জ:
                 </p>
-                <p className="text-[11px] pl-5">ঢাকার মধ্যে ৭০ টাকা, ঢাকার বাইরে ১২০ টাকা!</p>
+                <p className="text-xs pl-6 text-slate-700 font-medium leading-normal">ঢাকার মধ্যে ৭০ টাকা, ঢাকার বাইরে ১২০ টাকা!</p>
               </div>
 
               <div className="space-y-1">
-                <p className="text-slate-800 font-extrabold flex items-center gap-1.5">
-                  💵 সম্পূর্ণ ক্যাশ অন ডেলিভারি:
+                <p className="text-slate-900 font-bold text-sm flex items-center gap-1.5">
+                  💵  সম্পূর্ণ ক্যাশ অন ডেলিভারি:
                 </p>
-                <p className="text-[11px] pl-5">অর্ডার করতে অগ্রিম ১ টাকাও দিতে হবেনা, পণ্য রিসিভ করার সময় টাকা পরিশোধ করবেন!</p>
+                <p className="text-xs pl-6 text-slate-700 font-medium leading-normal">অর্ডার করতে অগ্রিম ১ টাকাও দিতে হবেনা, পণ্য রিসিভ করার সময় টাকা পরিশোধ করবেন!</p>
               </div>
 
               <div className="space-y-1">
-                <p className="text-slate-800 font-extrabold flex items-center gap-1.5">
-                  🔎 প্রোডাক্ট চেক করে নেওয়ার সুযোগ:
+                <p className="text-slate-900 font-bold text-sm flex items-center gap-1.5">
+                  🔎  প্রোডাক্ট চেক করে নেওয়ার সুযোগ:
                 </p>
-                <p className="text-[11px] pl-5">ডেলিভারি ম্যানের সামনে পণ্য ভালোভাবে দেখে তারপর রিসিভ করতে পারবেন।</p>
+                <p className="text-xs pl-6 text-slate-700 font-medium leading-normal">ডেলিভারি ম্যানের সামনে পণ্য ভালোভাবে দেখে তারপর রিসিভ করতে পারবেন।</p>
               </div>
             </div>
           </div>
@@ -358,10 +358,10 @@ export function ProductClient({
             {activeTab === "description" ? (
               <div className="space-y-6">
                 <div className="space-y-3">
-                  <h3 className="text-lg font-black text-slate-800">
+                  <h3 className="text-lg font-bold text-slate-900">
                     {product.name} - এর ব্যবহার ও কার্যকারিতা
                   </h3>
-                  <p className="text-xs sm:text-sm leading-relaxed text-slate-500 font-semibold">
+                  <p className="text-sm leading-relaxed text-slate-700 font-semibold">
                     {product.story}
                   </p>
                 </div>
@@ -372,7 +372,7 @@ export function ProductClient({
                   </h4>
                   <div className="grid gap-2.5 sm:grid-cols-2">
                     {product.benefits && product.benefits.map((benefit) => (
-                      <div key={benefit} className="flex items-start gap-2.5 text-xs font-bold text-slate-600">
+                      <div key={benefit} className="flex items-start gap-2.5 text-sm font-semibold text-slate-800 leading-relaxed">
                         <span className="w-4.5 h-4.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center shrink-0 mt-0.5">
                           <Check className="w-2.5 h-2.5 stroke-[3.5]" />
                         </span>
@@ -385,15 +385,15 @@ export function ProductClient({
             ) : (
               <div className="space-y-6">
                 <div className="space-y-3">
-                  <h3 className="text-lg font-black text-slate-800">প্রোডাক্টের টেকনিক্যাল স্পেসিফিকেশন</h3>
-                  <p className="text-xs text-slate-500 font-semibold">ভ্রমণ ও দৈনন্দিন ব্যবহারের জন্য সঠিক ও নিখুঁত পরিমাপসমূহ</p>
+                  <h3 className="text-lg font-bold text-slate-900">প্রোডাক্টের টেকনিক্যাল স্পেসিফিকেশন</h3>
+                  <p className="text-sm text-slate-600 font-semibold">ভ্রমণ ও দৈনন্দিন ব্যবহারের জন্য সঠিক ও নিখুঁত পরিমাপসমূহ</p>
                 </div>
 
-                <div className="border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-100 max-w-xl text-xs">
+                <div className="border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-100 max-w-xl text-sm">
                   {product.specs && product.specs.map((spec, index) => (
                     <div key={index} className="grid grid-cols-[120px_1fr] gap-4 p-3.5 hover:bg-slate-50 transition-colors">
-                      <span className="font-extrabold text-slate-400 uppercase tracking-wider">Spec {index + 1}</span>
-                      <span className="font-bold text-slate-700">{spec}</span>
+                      <span className="font-bold text-slate-400 uppercase tracking-wider">Spec {index + 1}</span>
+                      <span className="font-semibold text-slate-700">{spec}</span>
                     </div>
                   ))}
                 </div>

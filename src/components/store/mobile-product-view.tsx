@@ -135,8 +135,8 @@ export function MobileProductView({ product }: { product: Product }) {
       <div className="relative z-10 bg-white rounded-t-[3rem] px-6 pt-8 pb-12 shadow-[0_-12px_40px_rgba(0,0,0,0.04)] border-t border-slate-100/50 space-y-6">
         {/* Description Section */}
         <div className="space-y-2">
-          <h2 className="text-lg font-black text-slate-800">Description</h2>
-          <p className="text-xs font-semibold leading-relaxed text-slate-500">
+          <h2 className="text-lg font-bold text-slate-900">Description</h2>
+          <p className="text-sm font-semibold leading-relaxed text-slate-700">
             {product.story}
           </p>
         </div>
@@ -144,8 +144,8 @@ export function MobileProductView({ product }: { product: Product }) {
         {/* Benefits Checklist */}
         <div className="space-y-2">
           {product.benefits.map((benefit) => (
-            <div key={benefit} className="flex items-center gap-2 text-[11px] font-bold text-slate-600">
-              <span className="text-primary font-black text-sm">›</span>
+            <div key={benefit} className="flex items-start gap-2.5 text-sm font-semibold text-slate-800 leading-relaxed">
+              <span className="text-primary font-bold text-base mt-[-1px]">›</span>
               <span>{benefit}</span>
             </div>
           ))}
