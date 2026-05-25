@@ -79,8 +79,8 @@ export function Header({ categories: _categories }: { categories?: Category[] })
 
             {/* Dropdown Panel */}
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none group-hover:pointer-events-auto">
-              <div className="w-[340px] rounded-2xl border border-white/60 bg-white/95 p-4 shadow-[0_16px_48px_rgba(0,0,0,0.12)] backdrop-blur-xl">
-                <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400 px-3.5 mb-2">
+              <div className="w-[350px] rounded-3xl border border-slate-100/80 bg-white p-3 shadow-[0_20px_50px_rgba(0,0,0,0.09)]">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 px-3 mb-2 pt-1.5">
                   Product Categories
                 </p>
                 <div className="grid gap-1">
@@ -90,17 +90,17 @@ export function Header({ categories: _categories }: { categories?: Category[] })
                       <Link
                         key={cat.id}
                         href={`/category/${cat.slug}`}
-                        className="flex items-start gap-3 rounded-xl p-3.5 transition-all hover:bg-black/5 group/item text-left"
+                        className="flex items-start gap-3.5 rounded-2xl p-3 transition-all duration-300 hover:bg-primary/[0.06] hover:translate-x-1 group/item text-left"
                       >
-                        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary group-hover/item:bg-primary group-hover/item:text-primary-foreground transition-all">
-                          <CatIcon className="h-4.5 w-4.5" />
+                        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary group-hover/item:scale-105 transition-all duration-300">
+                          <CatIcon className="h-5 w-5" />
                         </div>
                         <div>
-                          <h4 className="text-sm font-bold text-slate-900 leading-none">
+                          <h4 className="text-sm font-bold text-slate-800 group-hover/item:text-primary transition-colors duration-300 leading-snug">
                             {cat.name}
                           </h4>
-                          <p className="mt-1.5 text-xs text-muted-foreground font-medium leading-relaxed">
-                            {cat.description.substring(0, 50)}...
+                          <p className="mt-1 text-[11px] text-slate-400 group-hover/item:text-slate-500 font-medium leading-normal transition-colors duration-300">
+                            {cat.description}
                           </p>
                         </div>
                       </Link>
