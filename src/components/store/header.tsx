@@ -65,16 +65,17 @@ export function Header({ categories: _categories }: { categories?: Category[] })
 
           {/* Shop with Dropdown Submenu */}
           <div className="group relative">
-            <button
+            <Link
+              href="/shop"
               className={`relative flex items-center gap-1.5 rounded-full px-4.5 py-2 text-sm font-semibold tracking-wide whitespace-nowrap transition-all duration-250 cursor-pointer ${
-                pathname.startsWith("/category/")
+                pathname === "/shop" || pathname.startsWith("/category/")
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:bg-black/5 hover:text-foreground"
               }`}
             >
               Shop
               <ChevronDown className="h-3.5 w-3.5 opacity-75 group-hover:rotate-180 transition-transform duration-200" />
-            </button>
+            </Link>
 
             {/* Dropdown Panel */}
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 pointer-events-none group-hover:pointer-events-auto">

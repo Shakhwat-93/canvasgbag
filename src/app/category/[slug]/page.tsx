@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CategoryClient } from "@/components/store/category-client";
+import { ShopLayoutClient } from "@/components/store/shop-layout-client";
 import { categories, getCategoryBySlug, getProductsByCategory } from "@/lib/data";
 
 export const revalidate = 3600;
@@ -25,17 +25,15 @@ export async function generateMetadata(props: PageProps<"/category/[slug]">): Pr
 
 export default async function CategoryPage(props: PageProps<"/category/[slug]">) {
   const { slug } = await props.params;
-  const [category, products] = await Promise.all([getCategoryBySlug(slug), getProductsByCategory(slug)]);
+  const [category] = await Promise.all([getCategoryBySlug(slug)]);
 
   if (!category) {
     notFound();
   }
 
   return (
-    <CategoryClient
-      slug={slug}
-      initialCategory={category}
-      initialProducts={products}
+    <ShopLayoutClient
+      initialCategorySlug={slug}
     />
   );
 }
