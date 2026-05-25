@@ -7,7 +7,7 @@ import { useStore } from "@/components/providers/store-provider";
 export function HeroSection() {
   const { settings } = useStore();
   return (
-    <section className="relative mx-auto w-full max-w-[1440px] px-4 pt-16 pb-8 sm:px-6 lg:px-8 overflow-hidden bg-white text-foreground">
+    <section className="relative mx-auto w-full max-w-[1440px] px-4 pt-6 pb-8 sm:px-6 lg:px-8 overflow-hidden bg-white text-foreground">
       {/* SVG Clip Path Definitions for Folder Tabs */}
       <svg className="absolute w-0 h-0" width="0" height="0">
         <defs>
@@ -44,150 +44,8 @@ export function HeroSection() {
         </defs>
       </svg>
 
-      {/* Top Section */}
-      <div className="flex flex-col gap-4 mb-4 sm:mb-6">
-        {/* Row 1: Badge & Avatars on mobile viewports */}
-        <div className="flex items-center justify-between w-full md:hidden">
-          {/* Left: Spinning Badge / Play Button */}
-          <div className="relative w-16 h-16 flex items-center justify-center shrink-0">
-            <div className="absolute inset-0 animate-spin-slow">
-              <svg viewBox="0 0 100 100" className="w-full h-full text-[#121212]">
-                <path
-                  id="textPathMobile"
-                  d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
-                  fill="none"
-                />
-                <text className="text-[7.5px] font-bold tracking-[0.12em] uppercase fill-current">
-                  <textPath href="#textPathMobile" startOffset="0%">
-                    {settings.heroSubheadline}
-                  </textPath>
-                </text>
-              </svg>
-            </div>
-            <div className="w-7 h-7 bg-black text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer group">
-              <svg
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-2.5 h-2.5 ml-0.5 group-hover:scale-110 transition-transform"
-              >
-                <polygon points="6,4 20,12 6,20" />
-              </svg>
-            </div>
-          </div>
-
-          {/* Right: Avatar Cluster */}
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="flex -space-x-2.5">
-              <div className="relative w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-slate-100 shadow-sm">
-                <Image
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop"
-                  alt="Fashion User"
-                  fill
-                  className="object-cover"
-                  sizes="32px"
-                />
-              </div>
-              <div className="relative w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-slate-100 shadow-sm">
-                <Image
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&auto=format&fit=crop"
-                  alt="Fashion User"
-                  fill
-                  className="object-cover"
-                  sizes="32px"
-                />
-              </div>
-              <div className="relative w-8 h-8 rounded-full border-2 border-white overflow-hidden bg-slate-100 shadow-sm">
-                <Image
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=256&auto=format&fit=crop"
-                  alt="Fashion User"
-                  fill
-                  className="object-cover"
-                  sizes="32px"
-                />
-              </div>
-              <div className="w-8 h-8 rounded-full border-2 border-white bg-black text-white flex items-center justify-center text-[10px] font-bold shadow-md cursor-pointer hover:bg-black/90 transition-colors">
-                +
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Row 2: Headline & Desktop-only items */}
-        <div className="flex items-center justify-between gap-8 w-full">
-          {/* Desktop Left Badge (hidden on mobile) */}
-          <div className="hidden md:flex relative w-28 h-28 items-center justify-center shrink-0">
-            <div className="absolute inset-0 animate-spin-slow">
-              <svg viewBox="0 0 100 100" className="w-full h-full text-[#121212]">
-                <path
-                  id="textPath"
-                  d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
-                  fill="none"
-                />
-                <text className="text-[7px] font-bold tracking-[0.12em] uppercase fill-current">
-                  <textPath href="#textPath" startOffset="0%">
-                    {settings.heroSubheadline}
-                  </textPath>
-                </text>
-              </svg>
-            </div>
-            <div className="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-lg hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer group">
-              <svg
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-4 h-4 ml-0.5 group-hover:scale-110 transition-transform"
-              >
-                <polygon points="6,4 20,12 6,20" />
-              </svg>
-            </div>
-          </div>
-
-          {/* Center: Headline */}
-          <div className="text-center max-w-3xl w-full">
-            <h1 className="text-[1.75rem] sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black leading-[1.1] tracking-[-0.03em] text-[#121212] whitespace-pre-line">
-              {settings.heroHeadline}
-            </h1>
-          </div>
-
-          {/* Desktop Right Avatars (hidden on mobile) */}
-          <div className="hidden md:flex items-center gap-2 shrink-0">
-            <div className="flex -space-x-3.5">
-              <div className="relative w-11 h-11 rounded-full border-[3px] border-white overflow-hidden bg-slate-100 shadow-sm">
-                <Image
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop"
-                  alt="Fashion User"
-                  fill
-                  className="object-cover"
-                  sizes="44px"
-                />
-              </div>
-              <div className="relative w-11 h-11 rounded-full border-[3px] border-white overflow-hidden bg-slate-100 shadow-sm">
-                <Image
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=256&auto=format&fit=crop"
-                  alt="Fashion User"
-                  fill
-                  className="object-cover"
-                  sizes="44px"
-                />
-              </div>
-              <div className="relative w-11 h-11 rounded-full border-[3px] border-white overflow-hidden bg-slate-100 shadow-sm">
-                <Image
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=256&auto=format&fit=crop"
-                  alt="Fashion User"
-                  fill
-                  className="object-cover"
-                  sizes="44px"
-                />
-              </div>
-              <div className="w-11 h-11 rounded-full border-[3px] border-white bg-black text-white flex items-center justify-center text-sm font-bold shadow-md cursor-pointer hover:bg-black/90 transition-colors">
-                +
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Bento Grid */}
-      <div className="grid grid-cols-5 gap-2 sm:gap-6 items-start px-0.5 sm:px-1 mt-6">
+      <div className="grid grid-cols-5 gap-2 sm:gap-6 items-start px-0.5 sm:px-1 mt-0">
         {/* Column 1 */}
         <div className="flex flex-col gap-2 sm:gap-6 mt-0.5 sm:mt-3">
           {/* Orange Card (Folder Tab Left) */}
