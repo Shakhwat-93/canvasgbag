@@ -109,7 +109,6 @@ export function ShopLayoutClient({
       result.sort((a, b) => a.name.localeCompare(b.name));
     } else {
       // Latest (default) - assuming newer products have higher IDs or are first
-      // In this case, we can sort by bestSeller or keep catalog order
     }
 
     return result;
@@ -143,7 +142,7 @@ export function ShopLayoutClient({
         <span className="text-xs font-black text-slate-800 uppercase tracking-wider">Catalog Filters</span>
         <button
           onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
-          className="px-3.5 py-1.5 bg-primary text-primary-foreground rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer"
+          className="px-3.5 py-1.5 bg-primary text-primary-foreground rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm cursor-pointer transition-colors duration-300"
         >
           <SlidersHorizontal className="w-3.5 h-3.5" />
           Filter
@@ -156,7 +155,7 @@ export function ShopLayoutClient({
           {/* PRICE RANGE FILTER */}
           <div className="space-y-4">
             <div className="border-b border-slate-100 pb-1">
-              <h3 className="text-xs font-extrabold text-rose-600 uppercase tracking-widest border-b-2 border-rose-600 pb-1.5 w-fit">
+              <h3 className="text-xs font-extrabold text-primary uppercase tracking-widest border-b-2 border-primary pb-1.5 w-fit transition-colors duration-300">
                 Price Range
               </h3>
             </div>
@@ -173,7 +172,7 @@ export function ShopLayoutClient({
                   setPriceSlider(val);
                   setMaxPrice(val);
                 }}
-                className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-red-600"
+                className="w-full h-1.5 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-primary transition-colors duration-300"
               />
             </div>
 
@@ -183,14 +182,14 @@ export function ShopLayoutClient({
                 type="number"
                 value={minPrice}
                 onChange={(e) => setMinPrice(Number(e.target.value))}
-                className="w-full h-9 rounded-lg border border-slate-200 text-center font-bold text-slate-700 focus:outline-none focus:border-red-600"
+                className="w-full h-9 rounded-lg border border-slate-200 text-center font-bold text-slate-700 focus:outline-none focus:border-primary transition-colors duration-300"
               />
               <span className="text-slate-400 font-bold">-</span>
               <input
                 type="number"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full h-9 rounded-lg border border-slate-200 text-center font-bold text-slate-700 focus:outline-none focus:border-red-600"
+                className="w-full h-9 rounded-lg border border-slate-200 text-center font-bold text-slate-700 focus:outline-none focus:border-primary transition-colors duration-300"
               />
             </div>
           </div>
@@ -198,7 +197,7 @@ export function ShopLayoutClient({
           {/* CATEGORIES FILTER */}
           <div className="space-y-3.5">
             <div className="border-b border-slate-100 pb-1">
-              <h3 className="text-xs font-extrabold text-rose-600 uppercase tracking-widest border-b-2 border-rose-600 pb-1.5 w-fit">
+              <h3 className="text-xs font-extrabold text-primary uppercase tracking-widest border-b-2 border-primary pb-1.5 w-fit transition-colors duration-300">
                 Categories
               </h3>
             </div>
@@ -209,13 +208,13 @@ export function ShopLayoutClient({
                 onClick={() => handleCategorySelect(null)}
                 className={`w-full flex items-center justify-between text-xs font-bold transition-all px-2.5 py-1.5 rounded-lg cursor-pointer ${
                   selectedCategorySlug === null
-                    ? "bg-red-600 text-white"
+                    ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <span className="flex items-center gap-2">
                   <span className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                    selectedCategorySlug === null ? "bg-white border-white text-red-600" : "border-slate-300"
+                    selectedCategorySlug === null ? "bg-white border-white text-primary" : "border-slate-300"
                   }`}>
                     {selectedCategorySlug === null && <Check className="w-3 h-3 stroke-[3px]" />}
                   </span>
@@ -238,13 +237,13 @@ export function ShopLayoutClient({
                     onClick={() => handleCategorySelect(cat.slug)}
                     className={`w-full flex items-center justify-between text-xs font-bold transition-all px-2.5 py-1.5 rounded-lg cursor-pointer ${
                       isActive
-                        ? "bg-red-600 text-white"
+                        ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
                     <span className="flex items-center gap-2 truncate">
                       <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
-                        isActive ? "bg-white border-white text-red-600" : "border-slate-300"
+                        isActive ? "bg-white border-white text-primary" : "border-slate-300"
                       }`}>
                         {isActive && <Check className="w-3 h-3 stroke-[3px]" />}
                       </span>
@@ -264,7 +263,7 @@ export function ShopLayoutClient({
           {/* SUB CATEGORIES FILTER */}
           <div className="space-y-3.5">
             <div className="border-b border-slate-100 pb-1">
-              <h3 className="text-xs font-extrabold text-rose-600 uppercase tracking-widest border-b-2 border-rose-600 pb-1.5 w-fit">
+              <h3 className="text-xs font-extrabold text-primary uppercase tracking-widest border-b-2 border-primary pb-1.5 w-fit transition-colors duration-300">
                 Sub Categories
               </h3>
             </div>
@@ -275,13 +274,13 @@ export function ShopLayoutClient({
                 onClick={() => handleSubCategorySelect(null)}
                 className={`w-full flex items-center justify-between text-xs font-bold transition-all px-2.5 py-1.5 rounded-lg cursor-pointer ${
                   selectedSubCategory === null
-                    ? "bg-red-600 text-white"
+                    ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
                 <span className="flex items-center gap-2">
                   <span className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
-                    selectedSubCategory === null ? "bg-white border-white text-red-600" : "border-slate-300"
+                    selectedSubCategory === null ? "bg-white border-white text-primary" : "border-slate-300"
                   }`}>
                     {selectedSubCategory === null && <Check className="w-3 h-3 stroke-[3px]" />}
                   </span>
@@ -304,13 +303,13 @@ export function ShopLayoutClient({
                     onClick={() => handleSubCategorySelect(sub.id)}
                     className={`w-full flex items-center justify-between text-xs font-bold transition-all px-2.5 py-1.5 rounded-lg cursor-pointer ${
                       isActive
-                        ? "bg-red-600 text-white"
+                        ? "bg-primary text-primary-foreground shadow-sm"
                         : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     }`}
                   >
                     <span className="flex items-center gap-2 truncate">
                       <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
-                        isActive ? "bg-white border-white text-red-600" : "border-slate-300"
+                        isActive ? "bg-white border-white text-primary" : "border-slate-300"
                       }`}>
                         {isActive && <Check className="w-3 h-3 stroke-[3px]" />}
                       </span>
@@ -342,7 +341,7 @@ export function ShopLayoutClient({
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="h-9 px-3 rounded-lg border border-slate-200 bg-white font-bold text-slate-700 focus:outline-none focus:border-red-600 cursor-pointer"
+                className="h-9 px-3 rounded-lg border border-slate-200 bg-white font-bold text-slate-700 focus:outline-none focus:border-primary cursor-pointer transition-colors duration-300"
               >
                 <option value="latest">Latest</option>
                 <option value="price-low">Price: Low to High</option>
@@ -352,9 +351,9 @@ export function ShopLayoutClient({
             </div>
           </div>
 
-          {/* Heading with left red vertical indicator line */}
+          {/* Heading with left vertical indicator line */}
           <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
-            <span className="w-1.5 h-6 bg-red-600 rounded-sm" />
+            <span className="w-1.5 h-6 bg-primary rounded-sm transition-colors duration-300" />
             <h2 className="text-lg md:text-xl font-black text-slate-900">
               {currentCategoryName} {selectedSubCategory && ` - ${SUB_CATEGORIES.find(s => s.id === selectedSubCategory)?.name}`}
             </h2>
@@ -372,7 +371,7 @@ export function ShopLayoutClient({
                   setSelectedCategorySlug(null);
                   setSelectedSubCategory(null);
                 }}
-                className="text-xs font-black text-red-600 hover:underline cursor-pointer"
+                className="text-xs font-black text-primary hover:underline cursor-pointer transition-colors duration-300"
               >
                 Reset all filters
               </button>

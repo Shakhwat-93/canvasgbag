@@ -205,7 +205,7 @@ export function MobileProductView({ product }: { product: Product }) {
         <div className="pt-2">
           <button
             onClick={handleAddToCart}
-            className="w-full bg-primary text-primary-foreground hover:opacity-95 active:scale-[0.98] rounded-full py-4.5 px-6 font-extrabold text-sm flex items-center justify-between shadow-[0_8px_24px_rgba(134,226,55,0.25)] transition-all duration-300 group"
+            className="w-full bg-primary text-primary-foreground hover:opacity-95 active:scale-[0.98] rounded-full py-4.5 px-6 font-extrabold text-sm flex items-center justify-between shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all duration-300 group"
           >
             <span className="pl-4">Add To Bag</span>
             <span className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
