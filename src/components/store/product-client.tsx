@@ -220,8 +220,8 @@ export function ProductClient({
             {/* Variants Color Panel */}
             {product.variants && product.variants.length > 1 && (
               <div className="space-y-3 border-t border-slate-100 pt-5">
-                <p className="text-xs font-black text-slate-400 uppercase tracking-wider">Choose Color</p>
-                <div className="grid grid-cols-2 gap-2">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Choose Color</p>
+                <div className="flex flex-wrap gap-2">
                   {product.variants.map((v) => {
                     const isSelected = variantId === v.id;
                     return (
@@ -229,18 +229,18 @@ export function ProductClient({
                         key={v.id}
                         type="button"
                         onClick={() => setVariantId(v.id)}
-                        className={`flex min-h-11 items-center justify-between rounded-xl border px-3 text-xs font-bold transition-all cursor-pointer ${
-                          isSelected ? "border-primary bg-primary/5 ring-2 ring-primary/10" : "border-slate-200 hover:border-slate-300"
+                        className={`flex h-11 items-center gap-2.5 rounded-full border px-4.5 text-xs font-bold transition-all duration-200 active:scale-[0.97] cursor-pointer ${
+                          isSelected
+                            ? "border-primary bg-primary/5 text-primary ring-1 ring-primary"
+                            : "border-slate-200 hover:border-slate-350 text-slate-700 bg-white shadow-sm"
                         }`}
                       >
-                        <span className="flex items-center gap-2 truncate">
-                          <span
-                            className="h-3 w-3 rounded-full border border-white shadow-sm shrink-0"
-                            style={{ backgroundColor: v.color }}
-                          />
-                          <span className="truncate">{v.name}</span>
-                        </span>
-                        {isSelected && <Check className="h-4 w-4 text-primary shrink-0" />}
+                        <span
+                          className="h-3.5 w-3.5 rounded-full border border-slate-200 shadow-sm shrink-0"
+                          style={{ backgroundColor: v.color }}
+                        />
+                        <span>{v.name}</span>
+                        {isSelected && <Check className="h-3.5 w-3.5 text-primary shrink-0" />}
                       </button>
                     );
                   })}
@@ -249,54 +249,53 @@ export function ProductClient({
             )}
 
             {/* Qty & Action buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
-              {/* Qty selector */}
-              <div className="flex items-center border border-slate-200 rounded-xl overflow-hidden h-11 bg-slate-50 w-28 shrink-0 justify-between">
+            <div className="space-y-3.5 pt-4 border-t border-slate-100">
+              {/* Row 1: Qty and Add to Cart side-by-side on mobile, all in one row on desktop */}
+              <div className="flex gap-3.5 w-full items-center">
+                {/* Qty selector */}
+                <div className="flex items-center border border-slate-200/80 rounded-full h-12 bg-slate-50/50 w-[110px] sm:w-28 shrink-0 justify-between px-1 shadow-sm">
+                  <button
+                    onClick={() => setQty((q) => Math.max(q - 1, 1))}
+                    className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-200/50 font-bold text-base transition-colors cursor-pointer text-slate-500 active:scale-90"
+                  >
+                    -
+                  </button>
+                  <span className="font-bold text-sm text-slate-800">{qty}</span>
+                  <button
+                    onClick={() => setQty((q) => Math.min(q + 1, 10))}
+                    className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-200/50 font-bold text-base transition-colors cursor-pointer text-slate-500 active:scale-90"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* Add to cart */}
                 <button
-                  onClick={() => setQty((q) => Math.max(q - 1, 1))}
-                  className="w-9 h-full hover:bg-slate-100 font-extrabold text-sm transition-colors cursor-pointer"
+                  onClick={handleAddToCart}
+                  className="flex-1 h-12 bg-[#1E293B] hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer shadow-sm"
                 >
-                  -
+                  <ShoppingCart className="w-4 h-4" />
+                  ADD TO CART
                 </button>
-                <span className="font-extrabold text-xs text-slate-800">{qty}</span>
+
+                {/* Buy Now (Only visible in row on desktop) */}
                 <button
-                  onClick={() => setQty((q) => Math.min(q + 1, 10))}
-                  className="w-9 h-full hover:bg-slate-100 font-extrabold text-sm transition-colors cursor-pointer"
+                  onClick={handleBuyNow}
+                  className="hidden sm:flex flex-1 h-12 bg-primary text-primary-foreground hover:opacity-95 font-black text-xs uppercase tracking-wider rounded-full items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer shadow-md shadow-primary/15"
                 >
-                  +
+                  <Zap className="w-4 h-4 fill-current" />
+                  BUY NOW
                 </button>
               </div>
 
-              {/* Add to cart */}
-              <button
-                onClick={handleAddToCart}
-                className="flex-1 h-11 bg-[#1E293B] hover:bg-slate-800 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-sm"
-              >
-                <ShoppingCart className="w-4 h-4" />
-                ADD TO CART
-              </button>
-
-              {/* Buy Now */}
+              {/* Row 2: Buy Now (Only visible on mobile) */}
               <button
                 onClick={handleBuyNow}
-                className="flex-1 h-11 bg-primary text-primary-foreground hover:opacity-90 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+                className="flex sm:hidden w-full h-12 bg-primary text-primary-foreground hover:opacity-95 font-black text-xs uppercase tracking-wider rounded-full items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer shadow-md shadow-primary/15"
               >
                 <Zap className="w-4 h-4 fill-current" />
                 BUY NOW
               </button>
-            </div>
-
-            {/* WhatsApp Contact button */}
-            <div className="pt-1">
-              <a
-                href={`https://wa.me/8801841650668?text=Hello,%20I%20want%20to%20order%20${encodeURIComponent(product.name)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full h-11 bg-[#075E54] hover:bg-[#128C7E] text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-sm"
-              >
-                <MessageCircle className="w-4.5 h-4.5 fill-current" />
-                +8801841650668
-              </a>
             </div>
           </div>
 
