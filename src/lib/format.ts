@@ -3,7 +3,7 @@ export function formatCurrency(amount: number) {
     maximumFractionDigits: 0,
   }).format(amount);
 
-  return `Tk ${formatted}`;
+  return `৳ ${formatted}`;
 }
 
 export function calculateCartTotals(items: { price: number; quantity: number }[]) {

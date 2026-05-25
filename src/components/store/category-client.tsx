@@ -77,6 +77,11 @@ export function CategoryClient({
           <p className="mt-3 text-base leading-7 text-muted-foreground">{category.description}</p>
         </section>
 
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-3 mb-6">
+          <span className="w-1.5 h-6 bg-red-600 rounded-sm" />
+          <h2 className="text-lg md:text-xl font-black text-slate-900">{category.name} পণ্যসমূহ</h2>
+        </div>
+
         {/* Products Grid */}
         <section className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {displayProducts.map((product, index) => (

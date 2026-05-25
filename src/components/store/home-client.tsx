@@ -121,13 +121,16 @@ export function HomeClient() {
       {/* Best Sellers Section */}
       <MotionSection className="border-y bg-muted/25">
         <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <p className="text-sm font-medium uppercase text-muted-foreground">Best sellers</p>
-              <h2 className="mt-2 text-3xl font-semibold">High-utility bags with premium energy.</h2>
+          <div className="flex items-center justify-between border-b border-slate-200 pb-3.5 mb-8">
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-red-600 rounded-sm" />
+              <h2 className="text-lg md:text-xl font-black text-slate-900">আমাদের সকল পণ্য</h2>
             </div>
+            <Link href={`/category/${categories[0]?.slug || 'everyday-totes'}`} className="text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors uppercase tracking-wider">
+              View All
+            </Link>
           </div>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {displayBestSellers.map((product, index) => (
               <ProductCard key={product.id} product={product} priority={index < 2} />
             ))}
