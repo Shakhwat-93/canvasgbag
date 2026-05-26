@@ -1,4 +1,4 @@
 PassengerEnabled on
 PassengerAppEnv production
-PassengerAppRoot /home/canvasba/storee.canvasbagbd.com
+PassengerAppRoot /home/canvasba/nextjs.canvasbagbd.com
 PassengerStartupFile server.js
