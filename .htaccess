@@ -1,4 +1,7 @@
-PassengerEnabled on
-PassengerAppEnv production
-PassengerAppRoot /home/canvasba/nextjs.canvasbagbd.com
-PassengerStartupFile server.js
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Redirect all root requests to public/ folder
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
