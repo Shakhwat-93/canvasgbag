@@ -1,0 +1,17 @@
+{
+  "name": "canvasbag-api",
+  "version": "1.0.0",
+  "description": "Lightweight Express API for CanvasBag order submission",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mysql2": "^3.11.5",
+    "uuid": "^11.1.0"
+  }
+}

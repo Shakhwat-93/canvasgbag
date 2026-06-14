@@ -1,0 +1,44 @@
+# CanvasBag — React SPA + PHP API on cPanel Apache
+
+# Disable Phusion Passenger (Node.js) — serve as plain Apache/PHP
+PassengerEnabled off
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. Serve PHP files directly (do NOT rewrite them to index.html)
+  RewriteRule \.php$ - [L]
+
+  # 2. Serve existing files and directories directly (images, css, js, etc.)
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+
+  # 3. Everything else → index.html (React Router handles client-side routing)
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# Caching for static assets (images, fonts, scripts)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp        "access plus 1 year"
+  ExpiresByType image/png         "access plus 1 year"
+  ExpiresByType image/jpeg        "access plus 1 year"
+  ExpiresByType image/gif         "access plus 1 year"
+  ExpiresByType image/svg+xml     "access plus 1 month"
+  ExpiresByType text/css          "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  ExpiresByType font/woff2        "access plus 1 year"
+</IfModule>
+
+# Gzip compression for faster loading
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
