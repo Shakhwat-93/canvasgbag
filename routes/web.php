@@ -38,3 +38,30 @@ Route::delete('/admin/product/{id}', [AdminController::class, 'deleteProduct'])-
 Route::post('/admin/order/{id}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.order.status');
 Route::delete('/admin/order/{id}', [AdminController::class, 'deleteOrder'])->name('admin.order.delete');
 
+// Helper setup route for cPanel deployment without SSH/terminal access
+Route::get('/cpanel-setup', function() {
+    try {
+        echo "<h3>cPanel Laravel Setup Tool</h3>";
+        
+        // 1. Run migrations
+        echo "Running database migrations... ";
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        echo "<span style='color: green;'><b>Done.</b></span><br>";
+        echo "<pre>" . \Illuminate\Support\Facades\Artisan::output() . "</pre>";
+
+        // 2. Clear cache
+        echo "Clearing cache... ";
+        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        \Illuminate\Support\Facades\Artisan::call('view:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        echo "<span style='color: green;'><b>Done.</b></span><br>";
+
+        echo "<br><span style='color: green;'><b>Setup completed successfully!</b></span>";
+        echo "<br><a href='/'>Go to Homepage</a>";
+    } catch (\Exception $e) {
+        echo "<br><span style='color: red;'><b>Error occurred during setup:</b></span><br>";
+        echo "<pre>" . $e->getMessage() . "</pre>";
+    }
+});
+
+
