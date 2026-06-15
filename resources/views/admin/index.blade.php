@@ -342,6 +342,12 @@
                 <div class="space-y-1">
                     <label class="uppercase">Image Link URL</label>
                     <input type="text" name="image" id="cat-image" placeholder="e.g. /brand/logo.webp" class="w-full h-10 px-3 border border-slate-200 rounded-xl focus:outline-none bg-slate-50/20" />
+                    <div class="flex items-center gap-2 mt-1">
+                        <label class="text-[10px] text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-3 py-1.5 rounded-lg cursor-pointer font-bold inline-flex items-center gap-1 transition-colors">
+                            📤 Upload Local File
+                            <input type="file" accept="image/*" class="hidden" onchange="uploadLocalImage(this, 'cat-image')" />
+                        </label>
+                    </div>
                 </div>
                 <div class="space-y-1">
                     <label class="uppercase">Description</label>
@@ -358,6 +364,48 @@
 
     <!-- Scripts -->
     <script>
+      // Image upload and compression helper
+      function uploadLocalImage(fileInput, targetInputId) {
+        const file = fileInput.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement("canvas");
+            let width = img.width;
+            let height = img.height;
+
+            const MAX_DIM = 700;
+            if (width > height) {
+              if (width > MAX_DIM) {
+                height = Math.round((height * MAX_DIM) / width);
+                width = MAX_DIM;
+              }
+            } else {
+              if (height > MAX_DIM) {
+                width = Math.round((width * MAX_DIM) / height);
+                height = MAX_DIM;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              const compressedDataUrl = canvas.toDataURL("image/webp", 0.7);
+              document.getElementById(targetInputId).value = compressedDataUrl;
+              alert("Local image processed & compressed successfully!");
+            }
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
       // 1. Tab switching engine
       function switchTab(activeTab) {
         const tabs = ['products', 'categories', 'settings'];
@@ -510,11 +558,20 @@
       function addProductImageRow(url = "", alt = "") {
         const container = document.getElementById("product-images-inputs-container");
         const div = document.createElement("div");
-        div.className = "flex gap-2 items-center";
+        div.className = "flex flex-col gap-1.5 border border-slate-100 p-2.5 rounded-xl bg-slate-50/30";
+        const uniqueId = `prod-img-input-${imgRowIndex}`;
         div.innerHTML = `
-          <input type="text" name="images[${imgRowIndex}][url]" value="${url}" placeholder="Image URL (e.g. /brand/image.webp)" class="flex-1 h-9 px-3 border border-slate-200 rounded-lg focus:outline-none" required />
-          <input type="text" name="images[${imgRowIndex}][alt]" value="${alt}" placeholder="Alt Text" class="w-32 h-9 px-3 border border-slate-200 rounded-lg focus:outline-none" />
-          <button type="button" onclick="this.parentNode.remove()" class="text-red-500 hover:text-red-700 p-2 cursor-pointer font-bold">&times;</button>
+          <div class="flex gap-2 items-center">
+            <input type="text" id="${uniqueId}" name="images[${imgRowIndex}][url]" value="${url}" placeholder="Image URL or Upload File" class="flex-1 h-9 px-3 border border-slate-200 bg-white rounded-lg focus:outline-none" required />
+            <input type="text" name="images[${imgRowIndex}][alt]" value="${alt}" placeholder="Alt Text" class="w-32 h-9 px-3 border border-slate-200 bg-white rounded-lg focus:outline-none" />
+            <button type="button" onclick="this.parentNode.parentNode.remove()" class="text-red-500 hover:text-red-700 p-2 cursor-pointer font-bold">&times;</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-[9px] text-slate-650 hover:text-slate-900 bg-white border border-slate-200 px-2.5 py-1 rounded-md cursor-pointer font-bold inline-flex items-center gap-1 transition-colors">
+              📤 Upload File
+              <input type="file" accept="image/*" class="hidden" onchange="uploadLocalImage(this, '${uniqueId}')" />
+            </label>
+          </div>
         `;
         container.appendChild(div);
         imgRowIndex++;
@@ -525,11 +582,20 @@
         const div = document.createElement("div");
         div.className = "flex flex-wrap gap-2 items-center border border-slate-100 p-2.5 rounded-xl bg-slate-50/50";
         if (!id) id = 'var-' + Math.random().toString(36).substr(2, 6);
+        const uniqueId = `prod-var-img-${varRowIndex}`;
         div.innerHTML = `
           <input type="hidden" name="variants[${varRowIndex}][id]" value="${id}" />
           <input type="text" name="variants[${varRowIndex}][name]" value="${name}" placeholder="Name (e.g. Forest Green)" class="w-36 h-9 px-3 border border-slate-200 bg-white rounded-lg focus:outline-none" required />
           <input type="text" name="variants[${varRowIndex}][colorCode]" value="${color}" placeholder="Color (e.g. #1A5F35)" class="w-28 h-9 px-3 border border-slate-200 bg-white rounded-lg focus:outline-none" />
-          <input type="text" name="variants[${varRowIndex}][image]" value="${image}" placeholder="Matching Image URL" class="flex-1 min-w-[150px] h-9 px-3 border border-slate-200 bg-white rounded-lg focus:outline-none" />
+          <div class="flex-1 min-w-[200px] flex flex-col gap-1.5">
+            <div class="flex gap-1.5 items-center">
+              <input type="text" id="${uniqueId}" name="variants[${varRowIndex}][image]" value="${image}" placeholder="Matching Image URL" class="w-full h-9 px-3 border border-slate-200 bg-white rounded-lg focus:outline-none" />
+              <label class="text-[9px] text-slate-650 hover:text-slate-900 bg-white border border-slate-200 px-2.5 py-1 rounded-md cursor-pointer font-bold inline-flex items-center gap-1 transition-colors shrink-0">
+                📤 Upload
+                <input type="file" accept="image/*" class="hidden" onchange="uploadLocalImage(this, '${uniqueId}')" />
+              </label>
+            </div>
+          </div>
           <div class="flex items-center gap-1.5">
             <input type="checkbox" name="variants[${varRowIndex}][inStock]" value="true" ${inStock ? 'checked' : ''} class="h-4.5 w-4.5 border-slate-200 rounded cursor-pointer" />
             <label class="text-[10px] uppercase text-slate-500 cursor-pointer">In Stock</label>
