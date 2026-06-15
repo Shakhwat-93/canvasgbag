@@ -38,10 +38,7 @@
     <div class="flex-1 flex flex-col md:flex-row max-w-7xl w-full mx-auto p-4 sm:p-6 gap-6">
         <!-- Sidebar Navigation -->
         <aside class="w-full md:w-[220px] shrink-0 space-y-2">
-            <button onclick="switchTab('orders')" id="btn-tab-orders" class="w-full flex items-center gap-3 px-4.5 py-3.5 rounded-2xl text-sm font-bold transition-all text-left bg-black text-white shadow-md cursor-pointer">
-                📦 Orders List
-            </button>
-            <button onclick="switchTab('products')" id="btn-tab-products" class="w-full flex items-center gap-3 px-4.5 py-3.5 rounded-2xl text-sm font-bold transition-all text-left text-slate-600 hover:bg-slate-100 cursor-pointer">
+            <button onclick="switchTab('products')" id="btn-tab-products" class="w-full flex items-center gap-3 px-4.5 py-3.5 rounded-2xl text-sm font-bold transition-all text-left bg-black text-white shadow-md cursor-pointer">
                 🎒 Products Manager
             </button>
             <button onclick="switchTab('categories')" id="btn-tab-categories" class="w-full flex items-center gap-3 px-4.5 py-3.5 rounded-2xl text-sm font-bold transition-all text-left text-slate-600 hover:bg-slate-100 cursor-pointer">
@@ -69,78 +66,8 @@
                 </div>
             @endif
 
-            <!-- 1. ORDERS TAB -->
-            <div id="tab-orders" class="space-y-6">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <h2 class="text-base font-black uppercase tracking-wider text-slate-800">Orders List</h2>
-                    <span class="bg-slate-100 text-slate-600 text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider">{{ count($orders) }} Total</span>
-                </div>
-
-                <div class="overflow-x-auto -mx-5 px-5">
-                    <table class="w-full border-collapse text-left text-xs min-w-[700px]">
-                        <thead>
-                            <tr class="border-b border-slate-200 text-slate-400 font-bold uppercase tracking-wider">
-                                <th class="pb-3 w-32">Order ID</th>
-                                <th class="pb-3">Customer</th>
-                                <th class="pb-3">Attribution</th>
-                                <th class="pb-3 text-right">Amount</th>
-                                <th class="pb-3 text-center">Status</th>
-                                <th class="pb-3 text-right">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
-                            @forelse($orders as $ord)
-                                <tr class="hover:bg-slate-50/50 transition-colors">
-                                    <td class="py-4">
-                                        <span class="font-extrabold text-slate-900 block">{{ $ord['id'] }}</span>
-                                        <span class="text-[9px] text-slate-400 font-bold block mt-0.5">{{ date('d M Y, h:i A', strtotime($ord['created_at'])) }}</span>
-                                    </td>
-                                    <td class="py-4 space-y-0.5">
-                                        <p class="font-bold text-slate-800">{{ $ord['customer_name'] }}</p>
-                                        <p class="text-[10px] text-slate-450">{{ $ord['phone'] }}</p>
-                                        <p class="text-[10px] text-slate-400 italic truncate max-w-xs">{{ $ord['address'] }}</p>
-                                    </td>
-                                    <td class="py-4 text-[10px]">
-                                        <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-500 capitalize">{{ $ord['traffic_source'] ?? 'Direct' }}</span>
-                                    </td>
-                                    <td class="py-4 text-right">
-                                        <span class="font-black text-slate-900">{{ number_format($ord['amount']) }}৳</span>
-                                        <span class="text-[9px] text-slate-400 font-bold block mt-0.5">{{ $ord['items'] }} item(s)</span>
-                                    </td>
-                                    <td class="py-4 text-center">
-                                        <form action="/admin/order/{{ $ord['id'] }}/status" method="POST" class="inline-block">
-                                            @csrf
-                                            <select name="status" onchange="this.form.submit()" class="rounded-lg border border-slate-200 text-[10px] px-2 py-1 focus:outline-none focus:ring-1 focus:ring-slate-400 bg-white font-bold cursor-pointer">
-                                                <option value="New" {{ $ord['status'] === 'New' ? 'selected' : '' }}>New</option>
-                                                <option value="Confirmed" {{ $ord['status'] === 'Confirmed' ? 'selected' : '' }}>Confirmed</option>
-                                                <option value="Dispatched" {{ $ord['status'] === 'Dispatched' ? 'selected' : '' }}>Dispatched</option>
-                                                <option value="Delivered" {{ $ord['status'] === 'Delivered' ? 'selected' : '' }}>Delivered</option>
-                                                <option value="Cancelled" {{ $ord['status'] === 'Cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                            </select>
-                                        </form>
-                                    </td>
-                                    <td class="py-4 text-right">
-                                        <form action="/admin/order/{{ $ord['id'] }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order?')" class="inline-block">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-500 hover:text-red-700 p-1.5 hover:bg-slate-100 rounded-full transition-colors cursor-pointer">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="6" class="py-8 text-center text-slate-400 font-semibold">No orders placed yet.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
             <!-- 2. PRODUCTS TAB -->
-            <div id="tab-products" class="space-y-6 hidden">
+            <div id="tab-products" class="space-y-6">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                     <h2 class="text-base font-black uppercase tracking-wider text-slate-800">Products Manager</h2>
                     <button onclick="openProductModal()" class="bg-black text-white hover:bg-black/90 text-[10px] font-bold uppercase tracking-widest px-4.5 py-2.5 rounded-xl shadow-md cursor-pointer transition-all active:scale-[0.98]">+ Add Product</button>
@@ -433,11 +360,9 @@
     <script>
       // 1. Tab switching engine
       function switchTab(activeTab) {
-        const tabs = ['orders', 'products', 'categories', 'settings'];
+        const tabs = ['products', 'categories', 'settings'];
         tabs.forEach(tab => {
           const btn = document.getElementById(`btn-tab-${tab}`);
-          const container = document.getElementById(`tab-${activeTab === tab ? tab : tab}`);
-          
           if (tab === activeTab) {
             btn.className = "w-full flex items-center gap-3 px-4.5 py-3.5 rounded-2xl text-sm font-bold transition-all text-left bg-black text-white shadow-md cursor-pointer";
             document.getElementById(`tab-${tab}`).classList.remove("hidden");
@@ -453,10 +378,11 @@
 
       // Restore active tab
       window.addEventListener('DOMContentLoaded', () => {
-        const savedTab = localStorage.getItem("cb_admin_active_tab");
-        if (savedTab) {
-          switchTab(savedTab);
+        let savedTab = localStorage.getItem("cb_admin_active_tab");
+        if (!savedTab || savedTab === 'orders') {
+          savedTab = 'products';
         }
+        switchTab(savedTab);
         
         // Settings theme initialization
         const activeTheme = "{{ $settings['themeColor'] ?? 'lime' }}";

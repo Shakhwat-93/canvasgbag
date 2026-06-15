@@ -39,7 +39,7 @@ class AdminController extends Controller
         $settings = $this->supabase->getCatalogSettings();
         $categories = $this->supabase->getCatalogCategories();
         $products = $this->supabase->getCatalogProducts();
-        $orders = $this->supabase->getOrders(200);
+        $orders = [];
 
         return view('admin.index', [
             'settings' => $settings,

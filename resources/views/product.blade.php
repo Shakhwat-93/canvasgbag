@@ -117,7 +117,7 @@
               @foreach($product['variants'] as $idx => $v)
                 @php
                   $isFirst = ($idx === 0);
-                @endblock
+                @endphp
                 <button
                   type="button"
                   onclick="selectVariant({{ $idx }}, '{{ $v['id'] }}')"
