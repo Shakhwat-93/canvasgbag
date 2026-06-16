@@ -175,11 +175,15 @@ function updateCartUI() {
   // Re-render items in active views
   renderCartDrawerItems();
   
-  if (document.getElementById("cart-page-container")) {
+  if (document.getElementById("cart-page-container") && typeof renderCartPage === 'function') {
     renderCartPage();
   }
   if (document.getElementById("checkout-form-container")) {
-    renderCheckoutSummary();
+    if (typeof initializeCheckout === 'function') {
+      initializeCheckout();
+    } else if (typeof renderCheckoutSummary === 'function') {
+      renderCheckoutSummary();
+    }
   }
 }
 
@@ -223,25 +227,28 @@ function renderCartDrawerItems() {
       const itemTotal = item.price * item.quantity;
       subtotal += itemTotal;
       return `
-        <div class="flex items-center gap-4 py-3 border-b border-slate-100 last:border-0">
-          <div class="relative h-16 w-16 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 shrink-0">
+        <div class="flex items-center gap-4 py-5 border-b border-slate-100 last:border-0">
+          <div class="relative h-22 w-22 rounded-2xl overflow-hidden bg-slate-50 border border-slate-150 shrink-0 shadow-xs">
             <img src="${item.image}" alt="${item.name}" class="h-full w-full object-cover" />
           </div>
           <div class="flex-1 min-w-0">
-            <h4 class="text-xs font-bold text-slate-800 truncate">${item.name}</h4>
-            <p class="text-[10px] text-slate-400 font-semibold mt-0.5">${item.variantName}</p>
-            <div class="flex items-center justify-between mt-2">
-              <span class="text-xs font-extrabold text-slate-900">${item.price} Tk</span>
+            <h4 class="text-[14px] sm:text-[15px] font-black text-slate-900 leading-snug" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.name}</h4>
+            <p class="text-xs text-slate-500 font-bold mt-1.5 flex items-center gap-1.5">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+              ${item.variantName}
+            </p>
+            <div class="flex items-center justify-between mt-3.5">
+              <span class="text-[15px] font-black text-red-650 bg-red-50/80 px-3 py-1 rounded-xl border border-red-100 shadow-sm">${item.price} Tk</span>
               <!-- Quantity Selector -->
-              <div class="flex items-center gap-1 border border-slate-200 rounded-lg bg-slate-50/50 p-0.5">
-                <button onclick="updateQuantity('${item.productId}', '${item.variantId}', ${item.quantity - 1})" class="h-5 w-5 rounded bg-white flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100 text-[10px] cursor-pointer">-</button>
-                <span class="text-[11px] font-extrabold text-slate-800 w-5 text-center">${item.quantity}</span>
-                <button onclick="updateQuantity('${item.productId}', '${item.variantId}', ${item.quantity + 1})" class="h-5 w-5 rounded bg-white flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100 text-[10px] cursor-pointer">+</button>
+              <div class="flex items-center gap-2 border border-slate-200 rounded-xl bg-slate-50 p-1">
+                <button onclick="updateQuantity('${item.productId}', '${item.variantId}', ${item.quantity - 1})" class="h-7 w-7 rounded-lg bg-white flex items-center justify-center font-extrabold text-slate-850 hover:bg-slate-100 text-sm shadow-xs cursor-pointer select-none">-</button>
+                <span class="text-sm font-black text-slate-900 w-6 text-center select-none">${item.quantity}</span>
+                <button onclick="updateQuantity('${item.productId}', '${item.variantId}', ${item.quantity + 1})" class="h-7 w-7 rounded-lg bg-white flex items-center justify-center font-extrabold text-slate-850 hover:bg-slate-100 text-sm shadow-xs cursor-pointer select-none">+</button>
               </div>
             </div>
           </div>
-          <button onclick="removeItem('${item.productId}', '${item.variantId}')" class="text-slate-300 hover:text-red-500 p-1 cursor-pointer shrink-0">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          <button onclick="removeItem('${item.productId}', '${item.variantId}')" class="text-slate-400 hover:text-red-650 hover:bg-red-50 p-2.5 rounded-xl transition-all cursor-pointer shrink-0">
+            <svg class="w-5.5 h-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
           </button>
         </div>
       `;
