@@ -118,8 +118,8 @@
     <div id="toast-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
 
     <!-- Core Scripts -->
-    <script src="/assets/js/analytics.js"></script>
-    <script src="/assets/js/cart.js"></script>
+    <script src="/assets/js/analytics.js?v={{ filemtime(public_path('assets/js/analytics.js')) }}"></script>
+    <script src="/assets/js/cart.js?v={{ filemtime(public_path('assets/js/cart.js')) }}"></script>
     @yield('scripts')
 </body>
 </html>
