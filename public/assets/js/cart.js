@@ -228,7 +228,7 @@ function renderCartDrawerItems() {
       subtotal += itemTotal;
       return `
         <div class="flex items-center gap-4 py-5 border-b border-slate-100 last:border-0">
-          <div class="relative h-22 w-22 rounded-2xl overflow-hidden bg-slate-50 border border-slate-150 shrink-0 shadow-xs">
+          <div class="relative h-20 w-20 rounded-2xl overflow-hidden bg-slate-50 border border-slate-150 shrink-0 shadow-xs">
             <img src="${item.image}" alt="${item.name}" class="h-full w-full object-cover" />
           </div>
           <div class="flex-1 min-w-0">
