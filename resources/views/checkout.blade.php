@@ -81,18 +81,18 @@
 
             <!-- Subtotal, Shipping Zone, Total -->
             <div class="mt-4 space-y-4">
-              <div class="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider pb-1">
-                <span>Cart Subtotal</span>
-                <span id="checkout-subtotal-val">0৳</span>
+              <div class="flex justify-between items-center py-2.5 px-3.5 bg-white rounded-2xl border border-slate-150 shadow-xs">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Cart Subtotal</span>
+                <span id="checkout-subtotal-val" class="font-black text-slate-850 text-sm">0 Tk</span>
               </div>
 
               <!-- Shipping zone selector radios -->
               <div class="grid gap-2.5 py-1">
                 <!-- Inside Dhaka -->
-                <label id="shipping-label-inside" class="flex items-center justify-between p-3 rounded-xl border border-[var(--primary)] bg-white ring-1 ring-[var(--primary)] shadow-sm cursor-pointer select-none transition-all">
-                  <div class="text-xs font-bold text-slate-600 flex flex-col">
+                <label id="shipping-label-inside" class="flex items-center justify-between p-3.5 rounded-xl border border-[var(--primary)] bg-white ring-1 ring-[var(--primary)] shadow-sm cursor-pointer select-none transition-all">
+                  <div class="text-xs font-bold text-slate-650 flex flex-col">
                     <span>ঢাকার ভিতরে</span>
-                    <span class="text-[var(--primary)] font-extrabold mt-0.5"><span id="shipping-rate-inside-val">0</span>৳</span>
+                    <span class="text-[var(--primary)] font-black text-sm mt-0.5"><span id="shipping-rate-inside-val">0</span> Tk</span>
                   </div>
                   <input
                     type="radio"
@@ -105,10 +105,10 @@
                 </label>
 
                 <!-- Outside Dhaka -->
-                <label id="shipping-label-outside" class="flex items-center justify-between p-3 rounded-xl border border-slate-150 bg-slate-50 hover:bg-slate-100/35 cursor-pointer select-none transition-all">
-                  <div class="text-xs font-bold text-slate-600 flex flex-col">
+                <label id="shipping-label-outside" class="flex items-center justify-between p-3.5 rounded-xl border border-slate-150 bg-slate-50 hover:bg-slate-100/35 cursor-pointer select-none transition-all">
+                  <div class="text-xs font-bold text-slate-650 flex flex-col">
                     <span>ঢাকার বাইরে</span>
-                    <span class="text-[var(--primary)] font-extrabold mt-0.5"><span id="shipping-rate-outside-val">0</span>৳</span>
+                    <span class="text-[var(--primary)] font-black text-sm mt-0.5"><span id="shipping-rate-outside-val">0</span> Tk</span>
                   </div>
                   <input
                     type="radio"
@@ -121,15 +121,15 @@
               </div>
 
               <!-- Discount row -->
-              <div id="checkout-discount-row" class="hidden flex justify-between text-xs font-bold text-red-500 uppercase tracking-wider">
-                <span>Discount (৳3,200+ Order)</span>
-                <span>-250৳</span>
+              <div id="checkout-discount-row" class="hidden flex justify-between items-center py-2 px-3 bg-red-50/50 rounded-xl border border-red-100 text-xs font-bold text-red-600 uppercase tracking-wider">
+                <span>Discount (Tk 3,200+ Order)</span>
+                <span class="font-black text-sm">-250 Tk</span>
               </div>
 
               <!-- Total row -->
-              <div class="flex justify-between items-center text-sm border-t border-slate-200/60 pt-3">
-                <span class="font-extrabold text-slate-800 uppercase tracking-wide">Total Amount</span>
-                <span id="checkout-total-val" class="text-lg sm:text-xl font-black text-red-600 tracking-tight">0৳</span>
+              <div class="flex justify-between items-center py-3.5 px-4 bg-white rounded-2xl border-2 border-red-200 shadow-xs">
+                <span class="text-sm font-black text-slate-800 uppercase tracking-wide">Total Amount</span>
+                <span id="checkout-total-val" class="text-xl sm:text-2xl font-black text-red-650 tracking-tight bg-red-50/80 px-4 py-1.5 rounded-xl border border-red-200 shadow-inner min-w-[120px] text-center">0 Tk</span>
               </div>
 
               <!-- Submit Button -->
@@ -197,15 +197,17 @@
     if (!listEl) return;
 
     listEl.innerHTML = checkoutCartItems.map((item) => `
-      <div class="flex items-center gap-3 py-3.5 text-sm">
-        <img src="${item.image}" alt="${item.name}" class="h-10 w-10 rounded-xl object-cover shrink-0 border border-slate-100 bg-white" />
+      <div class="flex items-center gap-4 py-4 border-b border-slate-100 last:border-0">
+        <img src="${item.image}" alt="${item.name}" class="h-14 w-14 rounded-xl object-cover shrink-0 border border-slate-200 bg-white shadow-xs" />
         <div class="flex-1 min-w-0">
-          <p class="font-bold text-slate-800 leading-tight truncate text-left">${item.name}</p>
-          <p class="text-xs text-slate-400 font-semibold mt-1 text-left">
-            ${item.variantName ? `${item.variantName} ` : ""}x ${item.quantity}
+          <p class="text-sm font-bold text-slate-900 leading-snug text-left" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.name}</p>
+          <p class="text-xs text-slate-500 font-bold mt-1 text-left flex items-center gap-1.5">
+            <span>${item.variantName ? `${item.variantName}` : "Standard"}</span>
+            <span class="text-slate-300">•</span>
+            <span class="text-slate-800 font-extrabold">Qty: ${item.quantity}</span>
           </p>
         </div>
-        <span class="font-extrabold text-slate-900 shrink-0">${item.price * item.quantity}৳</span>
+        <span class="font-black text-sm text-slate-950 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/60 shrink-0">${item.price * item.quantity} Tk</span>
       </div>
     `).join("");
   }
@@ -231,8 +233,8 @@
     const total = Math.max((subtotal + shippingFee) - discount, 0);
 
     // Update UI
-    document.getElementById("checkout-subtotal-val").textContent = `${subtotal}৳`;
-    document.getElementById("checkout-total-val").textContent = `${total}৳`;
+    document.getElementById("checkout-subtotal-val").textContent = `${subtotal} Tk`;
+    document.getElementById("checkout-total-val").textContent = `${total} Tk`;
 
     const discountRow = document.getElementById("checkout-discount-row");
     if (discount > 0) {

@@ -81,7 +81,7 @@
                                 <div>
                                     <h3 class="text-xs font-bold text-slate-800 truncate">{{ $p['name'] }}</h3>
                                     <p class="text-[10px] text-slate-450 mt-0.5">{{ $p['categoryName'] ?? 'Uncategorized' }}</p>
-                                    <p class="text-xs font-extrabold text-slate-900 mt-1.5">{{ number_format($p['price']) }}৳</p>
+                                    <p class="text-xs font-extrabold text-slate-900 mt-1.5">{{ number_format($p['price']) }} Tk</p>
                                 </div>
                                 <div class="flex items-center justify-end gap-1.5 pt-2">
                                     <button onclick="editProduct({{ json_encode($p) }})" class="p-1.5 border border-slate-200 hover:border-slate-400 hover:bg-slate-50 rounded-lg text-slate-500 cursor-pointer">
