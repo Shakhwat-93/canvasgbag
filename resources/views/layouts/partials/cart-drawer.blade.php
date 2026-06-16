@@ -1,3 +1,19 @@
+<style>
+  #cart-drawer-items-container .relative {
+    width: 80px !important;
+    height: 80px !important;
+    min-width: 80px !important;
+    min-height: 80px !important;
+    max-width: 80px !important;
+    max-height: 80px !important;
+  }
+  #cart-drawer-items-container img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+</style>
+
 <div id="cart-drawer" class="fixed inset-0 z-[110] flex justify-end bg-black/60 backdrop-blur-sm transition-opacity duration-300 pointer-events-none opacity-0">
   <!-- Backdrop click close -->
   <div onclick="toggleCartDrawer(false)" class="absolute inset-0 cursor-pointer"></div>
