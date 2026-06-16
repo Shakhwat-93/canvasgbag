@@ -197,17 +197,27 @@
     if (!listEl) return;
 
     listEl.innerHTML = checkoutCartItems.map((item) => `
-      <div class="flex items-center gap-4 py-4 border-b border-slate-100 last:border-0">
+      <div class="flex items-center gap-4 py-4 border-b border-slate-100 last:border-0 relative">
         <img src="${item.image}" alt="${item.name}" class="h-14 w-14 rounded-xl object-cover shrink-0 border border-slate-200 bg-white shadow-xs" />
         <div class="flex-1 min-w-0">
           <p class="text-sm font-bold text-slate-900 leading-snug text-left" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${item.name}</p>
-          <p class="text-xs text-slate-500 font-bold mt-1 text-left flex items-center gap-1.5">
+          <p class="text-xs text-slate-505 font-bold mt-1.5 text-left flex items-center gap-1.5">
             <span>${item.variantName ? `${item.variantName}` : "Standard"}</span>
-            <span class="text-slate-300">•</span>
-            <span class="text-slate-800 font-extrabold">Qty: ${item.quantity}</span>
           </p>
+          <!-- Quantity Adjuster -->
+          <div class="flex items-center gap-1 border border-slate-200 rounded-lg bg-slate-50 p-0.5 mt-2 w-fit">
+            <button type="button" onclick="updateQuantity('${item.productId}', '${item.variantId}', ${item.quantity - 1})" class="h-5.5 w-5.5 rounded-md bg-white flex items-center justify-center font-extrabold text-slate-700 hover:bg-slate-100 text-xs shadow-xs cursor-pointer select-none">-</button>
+            <span class="text-xs font-black text-slate-900 w-5 text-center select-none">${item.quantity}</span>
+            <button type="button" onclick="updateQuantity('${item.productId}', '${item.variantId}', ${item.quantity + 1})" class="h-5.5 w-5.5 rounded-md bg-white flex items-center justify-center font-extrabold text-slate-700 hover:bg-slate-100 text-xs shadow-xs cursor-pointer select-none">+</button>
+          </div>
         </div>
-        <span class="font-black text-sm text-slate-950 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/60 shrink-0">${item.price * item.quantity} Tk</span>
+        <!-- Price and Remove Button -->
+        <div class="flex flex-col items-end justify-between self-stretch shrink-0">
+          <button type="button" onclick="removeItem('${item.productId}', '${item.variantId}')" class="text-slate-400 hover:text-red-500 p-1.5 rounded-lg hover:bg-red-50 cursor-pointer transition-colors" title="Remove item">
+            <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+          <span class="font-black text-sm text-slate-950 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/60">${item.price * item.quantity} Tk</span>
+        </div>
       </div>
     `).join("");
   }
