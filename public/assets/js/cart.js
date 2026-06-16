@@ -61,7 +61,6 @@ function addItem(item) {
   });
 
   showToast("Added to Cart", `${item.name} (${item.variantName || "Standard"}) added successfully.`);
-  toggleCartDrawer(true);
 }
 
 // Remove item from cart
