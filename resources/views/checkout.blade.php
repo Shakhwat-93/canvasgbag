@@ -343,7 +343,6 @@
 
     // Save pending order details to localStorage for GA4/Meta Pixel attribution on success page redirect
     const name = document.getElementById("name").value;
-    const phone = document.getElementById("phone").value;
     const address = document.getElementById("address").value;
     const note = document.getElementById("note").value;
     
