@@ -60,7 +60,18 @@
                 </div>
                 <div class="grid gap-2">
                   <label htmlFor="phone" class="text-xs font-bold text-slate-600">মোবাইল নাম্বার <span class="text-red-500">*</span></label>
-                  <input type="text" id="phone" name="phone" required placeholder="01XXXXXXXXX" class="rounded-xl h-11 px-4 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-[var(--primary)] text-slate-800 text-sm font-medium bg-slate-50/25" />
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    required
+                    pattern="01[0-9]{9}"
+                    maxlength="11"
+                    minlength="11"
+                    placeholder="01XXXXXXXXX"
+                    title="মোবাইল নাম্বারটি অবশ্যই ১১ ডিজিটের হতে হবে এবং ০১ দিয়ে শুরু হতে হবে (যেমন: 01712345678)"
+                    class="rounded-xl h-11 px-4 border border-slate-200 focus:outline-none focus:ring-1 focus:ring-[var(--primary)] text-slate-800 text-sm font-medium bg-slate-50/25"
+                  />
                 </div>
                 <div class="grid gap-2">
                   <label htmlFor="note" class="text-xs font-bold text-slate-600">অর্ডার নোট (অপশনাল)</label>
@@ -311,6 +322,14 @@
     if (items.length === 0) {
       event.preventDefault();
       showToast("Order Failed", "Your cart is empty. Please add items.");
+      return;
+    }
+
+    const phone = document.getElementById("phone").value.trim();
+    const phoneRegexBD = /^01[0-9]{9}$/;
+    if (!phoneRegexBD.test(phone)) {
+      event.preventDefault();
+      showToast("ভুল মোবাইল নাম্বার", "মোবাইল নাম্বারটি অবশ্যই ০১ দিয়ে শুরু হওয়া ১১ ডিজিটের নাম্বার হতে হবে (যেমন: 01712345678)।");
       return;
     }
 

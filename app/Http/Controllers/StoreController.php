@@ -137,11 +137,13 @@ class StoreController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:50',
+            'phone' => ['required', 'string', 'regex:/^01[0-9]{9}$/'],
             'address' => 'required|string',
             'shipping_zone' => 'required|string',
             'note' => 'nullable|string',
             'items' => 'required', // Array of items from request
+        ], [
+            'phone.regex' => 'মোবাইল নাম্বারটি অবশ্যই ১১ ডিজিটের হতে হবে এবং ০১ দিয়ে শুরু হতে হবে (যেমন: 01712345678)।',
         ]);
 
         $name = $request->input('name');
