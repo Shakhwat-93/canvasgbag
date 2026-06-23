@@ -47,6 +47,9 @@
             <button onclick="switchTab('settings')" id="btn-tab-settings" class="w-full flex items-center gap-3 px-4.5 py-3.5 rounded-2xl text-sm font-bold transition-all text-left text-slate-600 hover:bg-slate-100 cursor-pointer">
                 ⚙️ Site Settings
             </button>
+            <button onclick="switchTab('landing_pages')" id="btn-tab-landing_pages" class="w-full flex items-center gap-3 px-4.5 py-3.5 rounded-2xl text-sm font-bold transition-all text-left text-slate-600 hover:bg-slate-100 cursor-pointer">
+                📝 Landing Pages
+            </button>
         </aside>
 
         <!-- Content Panel -->
@@ -136,6 +139,73 @@
                     @empty
                         <p class="text-xs font-semibold text-slate-400 col-span-3 text-center py-6">No categories found. Add your first category.</p>
                     @endforelse
+                </div>
+            </div>
+
+            <!-- 5. LANDING PAGES TAB -->
+            <div id="tab-landing_pages" class="space-y-6 hidden">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                    <h2 class="text-base font-black uppercase tracking-wider text-slate-800">Landing Pages</h2>
+                    <button onclick="openLandingPageBuilder()" class="bg-black text-white hover:bg-black/90 text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-xl shadow-md cursor-pointer transition-all active:scale-[0.98]">
+                        + Create Landing Page
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-xs text-slate-700 border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-150 text-slate-400 font-bold uppercase tracking-wider text-left bg-slate-50">
+                                <th class="py-3 px-4">Title / Slug</th>
+                                <th class="py-3 px-4">Custom Domain</th>
+                                <th class="py-3 px-4">GTM Container</th>
+                                <th class="py-3 px-4 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            @forelse($landingPages ?? [] as $lp)
+                                <tr class="hover:bg-slate-50/50">
+                                    <td class="py-3.5 px-4 font-bold text-slate-800">
+                                        {{ $lp['title'] ?? 'Untitled Page' }}
+                                        <div class="text-[10px] text-slate-400 font-bold mt-0.5 flex items-center gap-1.5">
+                                            <span>Slug: /lp/{{ $lp['id'] }}</span>
+                                            <a href="/lp/{{ $lp['id'] }}" target="_blank" class="text-indigo-650 hover:underline">Preview ↗</a>
+                                        </div>
+                                    </td>
+                                    <td class="py-3.5 px-4 font-semibold text-slate-650">
+                                        @if(!empty($lp['custom_domain']))
+                                            <a href="http://{{ $lp['custom_domain'] }}" target="_blank" class="text-slate-650 hover:text-indigo-600 font-bold hover:underline flex items-center gap-1">
+                                                {{ $lp['custom_domain'] }} ↗
+                                            </a>
+                                        @else
+                                            <span class="text-slate-400 font-medium">None</span>
+                                        @endif
+                                    </td>
+                                    <td class="py-3.5 px-4">
+                                        @if(!empty($lp['gtm_id']))
+                                            <span class="bg-indigo-50 text-indigo-650 px-2 py-0.5 rounded-md font-bold border border-indigo-150">{{ $lp['gtm_id'] }}</span>
+                                        @else
+                                            <span class="text-slate-400">Default Site GTM</span>
+                                        @endif
+                                    </td>
+                                    <td class="py-3.5 px-4">
+                                        <div class="flex justify-center items-center gap-2">
+                                            <button onclick='editLandingPage({!! json_encode($lp) !!})' class="border border-slate-200 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-xl font-bold uppercase tracking-wider cursor-pointer transition-all">Edit</button>
+                                            
+                                            <form action="/admin/landing-page/{{ $lp['id'] }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this landing page?')" class="inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="border border-red-200 hover:bg-red-50 text-red-650 px-3 py-1.5 rounded-xl font-bold uppercase tracking-wider cursor-pointer transition-all">Delete</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="py-12 text-center text-slate-400 font-bold col-span-4">No landing pages created yet. Click the button above to build one in a few clicks!</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
@@ -408,7 +478,7 @@
 
       // 1. Tab switching engine
       function switchTab(activeTab) {
-        const tabs = ['products', 'categories', 'settings'];
+        const tabs = ['products', 'categories', 'settings', 'landing_pages'];
         tabs.forEach(tab => {
           const btn = document.getElementById(`btn-tab-${tab}`);
           if (tab === activeTab) {
@@ -657,6 +727,488 @@
         document.getElementById("category-modal").classList.remove("hidden");
       }
 
+      }
+
+      /* ──────────────────────────────────────────────────────────
+         LANDING PAGE BUILDER CONTROLLER LOGIC
+         ────────────────────────────────────────────────────────── */
+      const catalogProducts = {!! json_encode($products) !!};
+      let builderComponents = [];
+      let currentEditingCompId = null;
+
+      function openLandingPageBuilder() {
+        // Reset states
+        builderComponents = [];
+        currentEditingCompId = null;
+
+        document.getElementById("lp-builder-title").textContent = "Create Landing Page";
+        document.getElementById("lp-title").value = "";
+        
+        const slugInput = document.getElementById("lp-id");
+        slugInput.value = "";
+        slugInput.removeAttribute("readonly");
+        slugInput.className = "w-full h-10 px-3 border border-slate-200 rounded-xl focus:outline-none bg-white font-medium";
+
+        document.getElementById("lp-custom-domain").value = "";
+        document.getElementById("lp-gtm-id").value = "";
+        document.getElementById("lp-template").value = "default";
+        document.getElementById("lp-custom-css").value = "";
+        document.getElementById("lp-form-components").value = "[]";
+
+        // Show Modal
+        document.getElementById("lp-builder-modal").classList.remove("hidden");
+        drawBuilderCanvas();
+      }
+
+      function closeLandingPageBuilder() {
+        document.getElementById("lp-builder-modal").classList.add("hidden");
+      }
+
+      function editLandingPage(lp) {
+        builderComponents = lp.components || [];
+        currentEditingCompId = null;
+
+        document.getElementById("lp-builder-title").textContent = "Edit Landing Page";
+        document.getElementById("lp-title").value = lp.title || "";
+        
+        const slugInput = document.getElementById("lp-id");
+        slugInput.value = lp.id || "";
+        slugInput.setAttribute("readonly", "readonly");
+        slugInput.className = "w-full h-10 px-3 border border-slate-200 rounded-xl focus:outline-none bg-slate-105 text-slate-400 font-medium cursor-not-allowed";
+
+        document.getElementById("lp-custom-domain").value = lp.custom_domain || "";
+        document.getElementById("lp-gtm-id").value = lp.gtm_id || "";
+        document.getElementById("lp-template").value = lp.template || "default";
+        document.getElementById("lp-custom-css").value = lp.custom_css || "";
+        document.getElementById("lp-form-components").value = JSON.stringify(builderComponents);
+
+        document.getElementById("lp-builder-modal").classList.remove("hidden");
+        drawBuilderCanvas();
+      }
+
+      function addBuilderComponent(type) {
+        const id = 'comp_' + Date.now() + '_' + Math.floor(Math.random() * 1000);
+        let defaultSettings = {};
+
+        if (type === 'hero') {
+          defaultSettings = {
+            title: "নতুন প্রিমিয়াম ক্যানভাস ব্যাগ কালেকশন",
+            subtitle: "আপনার নিত্যদিনের যাতায়াত সহজ ও স্টাইলিশ করতে প্রিমিয়াম কোয়ালিটি ব্যাগ।",
+            cta_text: "অর্ডার করতে এখানে ক্লিক করুন",
+            bg_color: "#F8FAFC",
+            badge: "সীমিত সময়ের অফার",
+            image: ""
+          };
+        } else if (type === 'product_showcase') {
+          defaultSettings = {
+            product_id: catalogProducts[0] ? catalogProducts[0].id : "",
+            benefits: [
+              "১০০% ক্যানভাস ও ওয়াটারপ্রুফ ইনার",
+              "ফ্রি ক্যাশ অন ডেলিভারি সুবিধা",
+              "৩ দিনের সহজ রিটার্ন পলিসি"
+            ]
+          };
+        } else if (type === 'benefits') {
+          defaultSettings = {
+            title: "কেন আমাদের পণ্যটি সেরা?",
+            items: [
+              { title: "ডেলিভারি সুবিধা", description: "পণ্য হাতে পেয়ে চেক করে পেমেন্ট করার নিশ্চয়তা।" },
+              { title: "রিপ্লেসমেন্ট সুবিধা", description: "যেকোনো ত্রুটিতে রয়েছে ফ্রি পরিবর্তন সুবিধা।" },
+              { title: "উন্নত ফিনিশিং", description: "আমাদের নিজস্ব ফ্যাক্টরিতে অভিজ্ঞ কারিগর দ্বারা তৈরি।" }
+            ]
+          };
+        } else if (type === 'reviews') {
+          defaultSettings = {
+            title: "গ্রাহকেরা যা বলছেন",
+            reviews: [
+              { name: "রাসেল চৌধুরী", text: "ব্যাগটা আসলেই দারুণ! প্রচুর জায়গা আছে এবং কাপড়টা বেশ মোটা।" },
+              { name: "নাবিলা পারভীন", text: "ঢাকার বাইরে ২ দিনে ব্যাগটা হাতে পেয়েছি। কোয়ালিটি ছবির মতোই।" },
+              { name: "আহমেদ ইমরান", text: "খুবই ভালো কাস্টমার সার্ভিস। ব্যাগের সেলাই ও ফিনিশিং দারুণ।" }
+            ]
+          };
+        } else if (type === 'faq') {
+          defaultSettings = {
+            title: "সাধারণ কিছু প্রশ্নাবলী",
+            faqs: [
+              { question: "ডেলিভারি চার্জ কত?", answer: "ঢাকার ভিতরে ৬০ টাকা এবং ঢাকার বাইরে ১৩০ টাকা।" },
+              { question: "পছন্দ না হলে ফেরত দেওয়া যাবে?", answer: "হ্যাঁ, ডেলিভারি ম্যানের সামনে দেখে অপছন্দ হলে সাথে সাথেই রিটার্ন করতে পারবেন।" },
+              { question: "পেমেন্ট কিভাবে করব?", answer: "আমরা শুধুমাত্র ক্যাশ অন ডেলিভারি (COD) সার্ভিস প্রদান করে থাকি।" }
+            ]
+          };
+        } else if (type === 'checkout') {
+          defaultSettings = {
+            product_id: catalogProducts[0] ? catalogProducts[0].id : "",
+            title: "অর্ডার কনফার্ম করতে ফর্মটি পূরণ করুন",
+            button_text: "অর্ডার কনফার্ম করুন (ক্যাশ অন ডেলিভারি)"
+          };
+        }
+
+        builderComponents.push({ id, type, settings: defaultSettings });
+        drawBuilderCanvas();
+      }
+
+      function deleteBuilderComponent(id) {
+        if (confirm("Are you sure you want to delete this section?")) {
+          builderComponents = builderComponents.filter(c => c.id !== id);
+          if (currentEditingCompId === id) {
+            currentEditingCompId = null;
+          }
+          drawBuilderCanvas();
+        }
+      }
+
+      function moveBuilderComponent(index, direction) {
+        if (direction === 'up' && index > 0) {
+          const temp = builderComponents[index];
+          builderComponents[index] = builderComponents[index - 1];
+          builderComponents[index - 1] = temp;
+        } else if (direction === 'down' && index < builderComponents.length - 1) {
+          const temp = builderComponents[index];
+          builderComponents[index] = builderComponents[index + 1];
+          builderComponents[index + 1] = temp;
+        }
+        drawBuilderCanvas();
+      }
+
+      function openComponentEditor(id) {
+        currentEditingCompId = id;
+        drawBuilderCanvas();
+      }
+
+      function closeComponentEditor() {
+        currentEditingCompId = null;
+        drawBuilderCanvas();
+      }
+
+      function drawBuilderCanvas() {
+        const listEl = document.getElementById("lp-components-list");
+        if (!listEl) return;
+
+        const editorEl = document.getElementById("lp-component-editor");
+        const canvasEl = document.getElementById("lp-canvas-panel");
+
+        if (currentEditingCompId) {
+          editorEl.classList.remove("hidden");
+          canvasEl.classList.add("hidden");
+          renderComponentEditor();
+          return;
+        }
+
+        editorEl.classList.add("hidden");
+        canvasEl.classList.remove("hidden");
+
+        if (builderComponents.length === 0) {
+          listEl.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-10 text-slate-400 font-bold text-center text-xs">
+              <span class="text-2xl mb-1">📋</span>
+              <span>No sections in this landing page. Click the buttons below to add sections like Hero, Showcase, or Checkout Block.</span>
+            </div>
+          `;
+          return;
+        }
+
+        listEl.innerHTML = builderComponents.map((comp, idx) => {
+          let summary = "";
+          if (comp.type === 'hero') {
+            summary = comp.settings.title || "No Title";
+          } else if (comp.type === 'product_showcase' || comp.type === 'checkout') {
+            const prod = catalogProducts.find(p => p.id === comp.settings.product_id);
+            summary = prod ? `Product: ${prod.name}` : "No Product Selected";
+          } else {
+            summary = comp.settings.title || "Section Details";
+          }
+
+          return `
+            <div class="bg-white border border-slate-200 p-4 rounded-xl flex items-center justify-between shadow-xs hover:border-slate-350 transition-all select-none">
+              <div class="flex items-center gap-3">
+                <span class="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center font-bold text-sm border border-slate-200">
+                  ${comp.type === 'hero' ? '🚀' : comp.type === 'product_showcase' ? '🎁' : comp.type === 'benefits' ? '🌟' : comp.type === 'reviews' ? '❤️' : comp.type === 'faq' ? '❓' : '🛒'}
+                </span>
+                <div class="text-left">
+                  <h5 class="text-xs font-black uppercase text-slate-800">${comp.type.toUpperCase().replace('_', ' ')}</h5>
+                  <p class="text-[10px] text-slate-400 font-semibold truncate max-w-[200px]">${summary}</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 shrink-0">
+                <button type="button" onclick="openComponentEditor('${comp.id}')" class="px-2 py-1 text-[10px] font-bold text-slate-550 hover:text-slate-800 border border-slate-200 hover:bg-slate-50 rounded-lg cursor-pointer transition-colors">Edit</button>
+                <button type="button" onclick="moveBuilderComponent(${idx}, 'up')" ${idx === 0 ? 'disabled' : ''} class="h-6 w-6 font-black text-slate-400 hover:text-slate-700 border border-slate-200 disabled:opacity-30 rounded-lg cursor-pointer flex items-center justify-center text-xs">↑</button>
+                <button type="button" onclick="moveBuilderComponent(${idx}, 'down')" ${idx === builderComponents.length - 1 ? 'disabled' : ''} class="h-6 w-6 font-black text-slate-400 hover:text-slate-700 border border-slate-200 disabled:opacity-30 rounded-lg cursor-pointer flex items-center justify-center text-xs">↓</button>
+                <button type="button" onclick="deleteBuilderComponent('${comp.id}')" class="h-6 w-6 font-black text-red-500 hover:bg-red-50 border border-red-100 rounded-lg cursor-pointer flex items-center justify-center text-xs">×</button>
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+
+      function updateCompSetting(key, val) {
+        const comp = builderComponents.find(c => c.id === currentEditingCompId);
+        if (comp) {
+          comp.settings[key] = val;
+        }
+      }
+
+      function updateCompSettingArray(key, idx, val) {
+        const comp = builderComponents.find(c => c.id === currentEditingCompId);
+        if (comp) {
+          comp.settings[key][idx] = val;
+        }
+      }
+
+      function updateCompSettingNestedArray(key, idx, nestedKey, val) {
+        const comp = builderComponents.find(c => c.id === currentEditingCompId);
+        if (comp) {
+          if (!comp.settings[key][idx]) {
+            comp.settings[key][idx] = {};
+          }
+          comp.settings[key][idx][nestedKey] = val;
+        }
+      }
+
+      function compressBuilderImage(file, callback) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement("canvas");
+            let width = img.width;
+            let height = img.height;
+
+            const MAX_DIM = 700;
+            if (width > height) {
+              if (width > MAX_DIM) {
+                height = Math.round((height * MAX_DIM) / width);
+                width = MAX_DIM;
+              }
+            } else {
+              if (height > MAX_DIM) {
+                width = Math.round((width * MAX_DIM) / height);
+                height = MAX_DIM;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+            if (ctx) {
+              ctx.drawImage(img, 0, 0, width, height);
+              const compressedDataUrl = canvas.toDataURL("image/webp", 0.7);
+              callback(compressedDataUrl);
+            }
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function uploadBuilderImageFile(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        compressBuilderImage(file, function(dataUrl) {
+          updateCompSetting('image', dataUrl);
+          renderComponentEditor(); // redraw to show uploaded preview
+        });
+      }
+
+      function renderComponentEditor() {
+        const container = document.getElementById("lp-editor-inputs-container");
+        if (!container) return;
+
+        const comp = builderComponents.find(c => c.id === currentEditingCompId);
+        if (!comp) {
+          closeComponentEditor();
+          return;
+        }
+
+        document.getElementById("lp-editor-comp-title").textContent = `Edit ${comp.type.toUpperCase().replace('_', ' ')} Section`;
+        container.innerHTML = "";
+
+        if (comp.type === 'hero') {
+          container.innerHTML = `
+            <div class="grid gap-4">
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Badge / Tagline</label>
+                <input type="text" value="${comp.settings.badge || ''}" oninput="updateCompSetting('badge', this.value)" class="h-9 px-3 border border-slate-200 rounded-lg focus:outline-none" />
+              </div>
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Headline / Main Title</label>
+                <textarea rows="2" oninput="updateCompSetting('title', this.value)" class="p-3 border border-slate-200 rounded-lg focus:outline-none">${comp.settings.title || ''}</textarea>
+              </div>
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Sub-headline / Description</label>
+                <textarea rows="3" oninput="updateCompSetting('subtitle', this.value)" class="p-3 border border-slate-200 rounded-lg focus:outline-none">${comp.settings.subtitle || ''}</textarea>
+              </div>
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">CTA Button Text</label>
+                <input type="text" value="${comp.settings.cta_text || ''}" oninput="updateCompSetting('cta_text', this.value)" class="h-9 px-3 border border-slate-200 rounded-lg focus:outline-none" />
+              </div>
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Background Color</label>
+                <input type="color" value="${comp.settings.bg_color || '#F8FAFC'}" onchange="updateCompSetting('bg_color', this.value)" class="h-9 w-20 border border-slate-200 rounded-lg focus:outline-none" />
+              </div>
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Hero Image</label>
+                ${comp.settings.image ? `<img src="${comp.settings.image}" class="h-20 w-auto object-contain rounded-lg border border-slate-200 mb-2" />` : ''}
+                <input type="file" onchange="uploadBuilderImageFile(event)" class="text-[10px]" />
+                <p class="text-[9px] text-slate-400">Upload a promo image. Compressed to WebP.</p>
+              </div>
+            </div>
+          `;
+        } else if (comp.type === 'product_showcase') {
+          const options = catalogProducts.map(p => `
+            <option value="${p.id}" ${comp.settings.product_id === p.id ? 'selected' : ''}>${p.name} (${p.price} Tk)</option>
+          `).join("");
+
+          container.innerHTML = `
+            <div class="grid gap-4">
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Select Catalog Product</label>
+                <select onchange="updateCompSetting('product_id', this.value)" class="h-9 px-2 border border-slate-200 rounded-lg focus:outline-none bg-white">
+                  <option value="">-- Choose Product --</option>
+                  ${options}
+                </select>
+              </div>
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Product Benefits (Highlight points)</label>
+                <div class="space-y-2">
+                  ${[0, 1, 2].map(idx => `
+                    <input type="text" value="${comp.settings.benefits[idx] || ''}" oninput="updateCompSettingArray('benefits', ${idx}, this.value)" placeholder="Benefit point ${idx + 1}" class="h-9 px-3 w-full border border-slate-200 rounded-lg focus:outline-none" />
+                  `).join("")}
+                </div>
+              </div>
+            </div>
+          `;
+        } else if (comp.type === 'benefits') {
+          container.innerHTML = `
+            <div class="grid gap-4">
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Section Title</label>
+                <input type="text" value="${comp.settings.title || ''}" oninput="updateCompSetting('title', this.value)" class="h-9 px-3 border border-slate-200 rounded-lg focus:outline-none" />
+              </div>
+              <div class="border-t border-slate-100 pt-3 space-y-4">
+                <h5 class="font-bold text-slate-700 uppercase">Benefits Details</h5>
+                ${[0, 1, 2].map(idx => `
+                  <div class="space-y-2 border border-slate-150 p-3 rounded-lg bg-slate-50/50">
+                    <span class="font-bold text-slate-500 text-[10px]">Item ${idx + 1}</span>
+                    <div class="grid gap-1">
+                      <label class="font-bold text-slate-600 text-[9px] uppercase">Title</label>
+                      <input type="text" value="${comp.settings.items[idx]?.title || ''}" oninput="updateCompSettingNestedArray('items', ${idx}, 'title', this.value)" class="h-8 px-2 border border-slate-200 rounded-lg bg-white" />
+                    </div>
+                    <div class="grid gap-1">
+                      <label class="font-bold text-slate-600 text-[9px] uppercase">Description</label>
+                      <textarea rows="2" oninput="updateCompSettingNestedArray('items', ${idx}, 'description', this.value)" class="p-2 border border-slate-200 rounded-lg bg-white">${comp.settings.items[idx]?.description || ''}</textarea>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `;
+        } else if (comp.type === 'reviews') {
+          container.innerHTML = `
+            <div class="grid gap-4">
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Section Title</label>
+                <input type="text" value="${comp.settings.title || ''}" oninput="updateCompSetting('title', this.value)" class="h-9 px-3 border border-slate-200 rounded-lg focus:outline-none" />
+              </div>
+              <div class="border-t border-slate-100 pt-3 space-y-4">
+                <h5 class="font-bold text-slate-700 uppercase">Customer Reviews</h5>
+                ${[0, 1, 2].map(idx => `
+                  <div class="space-y-2 border border-slate-150 p-3 rounded-lg bg-slate-50/50">
+                    <span class="font-bold text-slate-500 text-[10px]">Review ${idx + 1}</span>
+                    <div class="grid gap-1">
+                      <label class="font-bold text-slate-600 text-[9px] uppercase">Reviewer Name</label>
+                      <input type="text" value="${comp.settings.reviews[idx]?.name || ''}" oninput="updateCompSettingNestedArray('reviews', ${idx}, 'name', this.value)" class="h-8 px-2 border border-slate-200 rounded-lg bg-white" />
+                    </div>
+                    <div class="grid gap-1">
+                      <label class="font-bold text-slate-600 text-[9px] uppercase">Review Comment</label>
+                      <textarea rows="2" oninput="updateCompSettingNestedArray('reviews', ${idx}, 'text', this.value)" class="p-2 border border-slate-200 rounded-lg bg-white">${comp.settings.reviews[idx]?.text || ''}</textarea>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `;
+        } else if (comp.type === 'faq') {
+          container.innerHTML = `
+            <div class="grid gap-4">
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Section Title</label>
+                <input type="text" value="${comp.settings.title || ''}" oninput="updateCompSetting('title', this.value)" class="h-9 px-3 border border-slate-200 rounded-lg focus:outline-none" />
+              </div>
+              <div class="border-t border-slate-100 pt-3 space-y-4">
+                <h5 class="font-bold text-slate-700 uppercase">Frequently Asked Questions</h5>
+                ${[0, 1, 2].map(idx => `
+                  <div class="space-y-2 border border-slate-150 p-3 rounded-lg bg-slate-50/50">
+                    <span class="font-bold text-slate-500 text-[10px]">FAQ ${idx + 1}</span>
+                    <div class="grid gap-1">
+                      <label class="font-bold text-slate-600 text-[9px] uppercase">Question</label>
+                      <input type="text" value="${comp.settings.faqs[idx]?.question || ''}" oninput="updateCompSettingNestedArray('faqs', ${idx}, 'question', this.value)" class="h-8 px-2 border border-slate-200 rounded-lg bg-white" />
+                    </div>
+                    <div class="grid gap-1">
+                      <label class="font-bold text-slate-600 text-[9px] uppercase">Answer</label>
+                      <textarea rows="2" oninput="updateCompSettingNestedArray('faqs', ${idx}, 'answer', this.value)" class="p-2 border border-slate-200 rounded-lg bg-white">${comp.settings.faqs[idx]?.answer || ''}</textarea>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `;
+        } else if (comp.type === 'checkout') {
+          const options = catalogProducts.map(p => `
+            <option value="${p.id}" ${comp.settings.product_id === p.id ? 'selected' : ''}>${p.name} (${p.price} Tk)</option>
+          `).join("");
+
+          container.innerHTML = `
+            <div class="grid gap-4">
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Target Catalog Product</label>
+                <select onchange="updateCompSetting('product_id', this.value)" class="h-9 px-2 border border-slate-200 rounded-lg focus:outline-none bg-white">
+                  <option value="">-- Choose Product --</option>
+                  ${options}
+                </select>
+              </div>
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Block Header Title</label>
+                <input type="text" value="${comp.settings.title || ''}" oninput="updateCompSetting('title', this.value)" class="h-9 px-3 border border-slate-200 rounded-lg focus:outline-none" />
+              </div>
+              <div class="grid gap-1">
+                <label class="font-bold text-slate-600 uppercase">Submit Button Text</label>
+                <input type="text" value="${comp.settings.button_text || ''}" oninput="updateCompSetting('button_text', this.value)" class="h-9 px-3 border border-slate-200 rounded-lg focus:outline-none" />
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      function saveLandingPage() {
+        const title = document.getElementById("lp-title").value.trim();
+        const slug = document.getElementById("lp-id").value.trim();
+
+        if (!title) {
+          alert("Page title is required!");
+          return;
+        }
+        if (!slug) {
+          alert("URL slug is required!");
+          return;
+        }
+
+        // Validate checkout block exists
+        const checkoutExists = builderComponents.some(c => c.type === 'checkout');
+        if (!checkoutExists) {
+          if (!confirm("Warning: You haven't added a Checkout Block. Customers won't be able to purchase directly. Do you still want to save?")) {
+            return;
+          }
+        }
+
+        // Populate hidden input
+        document.getElementById("lp-form-components").value = JSON.stringify(builderComponents);
+        
+        // Submit
+        document.getElementById("lp-builder-form").submit();
+      }
+
       /* ──────────────────────────────────────────────────────────
          THEME PICKER LOGIC
          ────────────────────────────────────────────────────────── */
@@ -682,5 +1234,131 @@
         }
       }
     </script>
+
+    <!-- LANDING PAGE BUILDER MODAL -->
+    <div id="lp-builder-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex justify-center items-center p-4 sm:p-6 overflow-y-auto hidden">
+        <div class="bg-white w-full max-w-5xl rounded-3xl border border-slate-200/80 shadow-2xl flex flex-col h-[90vh] overflow-hidden">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div class="text-left">
+                    <h3 id="lp-builder-title" class="text-sm font-black uppercase tracking-wider text-slate-800">Landing Page Builder</h3>
+                    <p class="text-[10px] text-slate-400 font-bold mt-0.5">Drag, drop, and configure sections to build your landing page.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="closeLandingPageBuilder()" class="border border-slate-200 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer transition-all">Cancel</button>
+                    <button type="button" onclick="saveLandingPage()" class="bg-black text-white hover:bg-black/90 px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer transition-all shadow-md">Save Page</button>
+                </div>
+            </div>
+
+            <!-- Modal Body (Two Column Layout) -->
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Left Column: Page Settings & Metadata (Scrollable) -->
+                <div class="w-1/3 border-r border-slate-100 p-6 overflow-y-auto space-y-5 bg-slate-50/30">
+                    <form id="lp-builder-form" action="/admin/landing-page" method="POST">
+                        @csrf
+                        <input type="hidden" name="components" id="lp-form-components" value="[]" />
+                        
+                        <div class="space-y-4 text-xs text-left">
+                            <div class="border-b border-slate-150 pb-2 mb-3">
+                                <h4 class="font-black text-slate-750 uppercase tracking-wide">Page Settings</h4>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="font-bold text-slate-655 uppercase">Page Title <span class="text-red-500">*</span></label>
+                                <input type="text" name="title" id="lp-title" required placeholder="e.g. Special Offer Wood Footrest" onkeyup="if(!document.getElementById('lp-id').readOnly) generateSlug(this.value, 'lp-id')" class="w-full h-10 px-3 border border-slate-200 rounded-xl focus:outline-none bg-white font-medium" />
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="font-bold text-slate-655 uppercase">URL Slug / Path <span class="text-red-500">*</span></label>
+                                <input type="text" name="id" id="lp-id" required placeholder="e.g. wood-footrest-deal" class="w-full h-10 px-3 border border-slate-200 rounded-xl focus:outline-none bg-white font-medium" />
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="font-bold text-slate-655 uppercase">Custom Domain (Optional)</label>
+                                <input type="text" name="custom_domain" id="lp-custom-domain" placeholder="e.g. footrestdeal.com" class="w-full h-10 px-3 border border-slate-200 rounded-xl focus:outline-none bg-white font-medium" />
+                                <p class="text-[9px] text-slate-400 leading-normal">DNS A/CNAME record of this domain must point to your server IP.</p>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="font-bold text-slate-655 uppercase">GTM Container ID (Optional)</label>
+                                <input type="text" name="gtm_id" id="lp-gtm-id" placeholder="e.g. GTM-XXXXXXX" class="w-full h-10 px-3 border border-slate-200 rounded-xl focus:outline-none bg-white font-medium" />
+                                <p class="text-[9px] text-slate-400 leading-normal">Separate GTM Container ID for tracking conversions on this page.</p>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="font-bold text-slate-655 uppercase">Template</label>
+                                <select name="template" id="lp-template" class="w-full h-10 px-3 border border-slate-200 rounded-xl focus:outline-none bg-white font-medium">
+                                    <option value="default">Default Landing Page</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-1">
+                                <label class="font-bold text-slate-655 uppercase">Custom CSS (Optional)</label>
+                                <textarea name="custom_css" id="lp-custom-css" rows="4" placeholder="/* Custom CSS overrides */" class="w-full p-3 border border-slate-200 rounded-xl focus:outline-none bg-white font-mono"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right Column: Canvas & Component Options -->
+                <div class="flex-1 flex flex-col overflow-hidden bg-slate-100/50 p-6">
+                    <!-- Dynamic Component Editor (Hidden by default, shown when editing a component) -->
+                    <div id="lp-component-editor" class="flex-1 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm overflow-y-auto space-y-6 hidden">
+                        <!-- Head of Editor -->
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                            <h4 id="lp-editor-comp-title" class="font-black text-sm uppercase text-slate-800">Edit Section</h4>
+                            <button type="button" onclick="closeComponentEditor()" class="text-xs font-bold text-indigo-650 hover:underline uppercase">Done Editing</button>
+                        </div>
+                        <!-- Inputs will be injected here dynamically -->
+                        <div id="lp-editor-inputs-container" class="space-y-4 text-xs text-left"></div>
+                    </div>
+
+                    <!-- Main Canvas Panel -->
+                    <div id="lp-canvas-panel" class="flex-1 flex flex-col overflow-hidden space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-black text-xs uppercase tracking-wide text-slate-600">Page Components Layout</h4>
+                            <span class="text-[10px] text-slate-400 font-bold">Add sections and reorder them.</span>
+                        </div>
+
+                        <!-- Components List (Scrollable Canvas) -->
+                        <div id="lp-components-list" class="flex-1 overflow-y-auto border-2 border-dashed border-slate-200 rounded-2xl p-4 space-y-3 bg-slate-50/50 min-h-[200px]">
+                            <!-- Injected dynamically -->
+                        </div>
+
+                        <!-- Add Component Buttons -->
+                        <div class="pt-2">
+                            <label class="block text-[10px] font-bold text-slate-450 uppercase tracking-wider mb-2 text-left">Add Section to Layout</label>
+                            <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                                <button type="button" onclick="addBuilderComponent('hero')" class="border border-slate-200 hover:border-slate-350 bg-white p-2.5 rounded-xl text-center cursor-pointer hover:bg-slate-50 transition-all">
+                                    <span class="block text-lg">🚀</span>
+                                    <span class="text-[9px] font-extrabold uppercase text-slate-600">Hero Section</span>
+                                </button>
+                                <button type="button" onclick="addBuilderComponent('product_showcase')" class="border border-slate-200 hover:border-slate-350 bg-white p-2.5 rounded-xl text-center cursor-pointer hover:bg-slate-50 transition-all">
+                                    <span class="block text-lg">🎁</span>
+                                    <span class="text-[9px] font-extrabold uppercase text-slate-600">Showcase</span>
+                                </button>
+                                <button type="button" onclick="addBuilderComponent('benefits')" class="border border-slate-200 hover:border-slate-350 bg-white p-2.5 rounded-xl text-center cursor-pointer hover:bg-slate-50 transition-all">
+                                    <span class="block text-lg">🌟</span>
+                                    <span class="text-[9px] font-extrabold uppercase text-slate-600">Benefits Grid</span>
+                                </button>
+                                <button type="button" onclick="addBuilderComponent('reviews')" class="border border-slate-200 hover:border-slate-350 bg-white p-2.5 rounded-xl text-center cursor-pointer hover:bg-slate-50 transition-all">
+                                    <span class="block text-lg">❤️</span>
+                                    <span class="text-[9px] font-extrabold uppercase text-slate-600">Reviews</span>
+                                </button>
+                                <button type="button" onclick="addBuilderComponent('faq')" class="border border-slate-200 hover:border-slate-350 bg-white p-2.5 rounded-xl text-center cursor-pointer hover:bg-slate-50 transition-all">
+                                    <span class="block text-lg">❓</span>
+                                    <span class="text-[9px] font-extrabold uppercase text-slate-600">FAQ Section</span>
+                                </button>
+                                <button type="button" onclick="addBuilderComponent('checkout')" class="border border-slate-200 hover:border-slate-350 bg-white p-2.5 rounded-xl text-center cursor-pointer hover:bg-slate-50 transition-all">
+                                    <span class="block text-lg">🛒</span>
+                                    <span class="text-[9px] font-extrabold uppercase text-slate-600">Checkout Block</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

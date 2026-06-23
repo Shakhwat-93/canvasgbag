@@ -23,6 +23,7 @@ Route::get('/product/{slug}', [StoreController::class, 'product'])->name('produc
 Route::get('/checkout', [StoreController::class, 'checkout'])->name('checkout');
 Route::post('/checkout', [StoreController::class, 'placeOrder'])->name('checkout.place');
 Route::get('/order/success/{id}', [StoreController::class, 'success'])->name('order.success');
+Route::get('/lp/{slug}', [StoreController::class, 'renderLandingPage'])->name('landing_page.show');
 
 // Admin routes
 Route::get('/admin/login', [AdminController::class, 'loginForm'])->name('admin.login');
@@ -37,6 +38,8 @@ Route::post('/admin/product', [AdminController::class, 'upsertProduct'])->name('
 Route::delete('/admin/product/{id}', [AdminController::class, 'deleteProduct'])->name('admin.product.delete');
 Route::post('/admin/order/{id}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.order.status');
 Route::delete('/admin/order/{id}', [AdminController::class, 'deleteOrder'])->name('admin.order.delete');
+Route::post('/admin/landing-page', [AdminController::class, 'upsertLandingPage'])->name('admin.landing_page.upsert');
+Route::delete('/admin/landing-page/{id}', [AdminController::class, 'deleteLandingPage'])->name('admin.landing_page.delete');
 
 // Helper setup route for cPanel deployment without SSH/terminal access
 Route::get('/cpanel-setup', function() {

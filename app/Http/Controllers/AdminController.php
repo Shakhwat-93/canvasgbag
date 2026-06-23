@@ -39,12 +39,14 @@ class AdminController extends Controller
         $settings = $this->supabase->getCatalogSettings();
         $categories = $this->supabase->getCatalogCategories();
         $products = $this->supabase->getCatalogProducts();
+        $landingPages = $this->supabase->getLandingPages();
         $orders = [];
 
         return view('admin.index', [
             'settings' => $settings,
             'categories' => $categories,
             'products' => $products,
+            'landingPages' => $landingPages,
             'orders' => $orders,
         ]);
     }
@@ -288,5 +290,57 @@ class AdminController extends Controller
         }
 
         return back()->with('success', 'Order deleted successfully.');
+    }
+
+    /**
+     * Upsert Landing Page (Create & Update)
+     */
+    public function upsertLandingPage(Request $request)
+    {
+        if (!$this->checkAuth()) { return response()->json(['error' => 'Unauthorized'], 401); }
+
+        $id = $request->input('id'); // Slug
+        $id = strtolower(trim($id));
+        $id = preg_replace('/[^a-z0-9\-]/', '', str_replace(' ', '-', $id));
+
+        if (empty($id)) {
+            return back()->withErrors(['landing_page' => 'Slug cannot be empty.']);
+        }
+
+        $components = $request->input('components');
+        $componentsArray = is_string($components) ? json_decode($components, true) : $components;
+
+        $data = [
+            'title' => $request->input('title') ?? 'New Landing Page',
+            'custom_domain' => $request->input('custom_domain') ? strtolower(trim($request->input('custom_domain'))) : null,
+            'gtm_id' => $request->input('gtm_id') ? trim($request->input('gtm_id')) : null,
+            'template' => $request->input('template') ?? 'default',
+            'custom_css' => $request->input('custom_css') ?? '',
+            'components' => $componentsArray ?? [],
+        ];
+
+        $success = $this->supabase->upsertLandingPage($id, $data);
+        if ($success) {
+            Cache::forget('cb_landing_pages');
+            return back()->with('success', 'Landing page saved successfully.');
+        }
+
+        return back()->withErrors(['landing_page' => 'Failed to save landing page to Supabase.']);
+    }
+
+    /**
+     * Delete Landing Page
+     */
+    public function deleteLandingPage($id)
+    {
+        if (!$this->checkAuth()) { return response()->json(['error' => 'Unauthorized'], 401); }
+
+        $success = $this->supabase->deleteLandingPage($id);
+        if ($success) {
+            Cache::forget('cb_landing_pages');
+            return back()->with('success', 'Landing page deleted successfully.');
+        }
+
+        return back()->withErrors(['landing_page' => 'Failed to delete landing page.']);
     }
 }

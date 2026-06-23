@@ -224,6 +224,95 @@ class SupabaseService
     }
 
     /* ──────────────────────────────────────────────────────────
+       LANDING PAGES APIS
+       ────────────────────────────────────────────────────────── */
+
+    /**
+     * Get Landing Pages
+     */
+    public function getLandingPages(): array
+    {
+        try {
+            $response = $this->client()->withHeaders($this->catalogHeaders())
+                ->get("{$this->catalogUrl}/rest/v1/cb_landing_pages?select=*");
+
+            if ($response->successful()) {
+                return array_map(function ($row) {
+                    $data = $row['data'] ?? [];
+                    if (!isset($data['id']) && isset($row['id'])) {
+                        $data['id'] = $row['id'];
+                    }
+                    return $data;
+                }, $response->json() ?? []);
+            }
+        } catch (\Exception $e) {
+            Log::error("Supabase getLandingPages error: " . $e->getMessage());
+        }
+
+        return [];
+    }
+
+    /**
+     * Get Single Landing Page
+     */
+    public function getLandingPage(string $id): ?array
+    {
+        try {
+            $response = $this->client()->withHeaders($this->catalogHeaders())
+                ->get("{$this->catalogUrl}/rest/v1/cb_landing_pages?id=eq.{$id}&select=*");
+
+            if ($response->successful() && !empty($response->json())) {
+                $rows = $response->json();
+                $data = $rows[0]['data'] ?? null;
+                if ($data && !isset($data['id'])) {
+                    $data['id'] = $rows[0]['id'] ?? $id;
+                }
+                return $data;
+            }
+        } catch (\Exception $e) {
+            Log::error("Supabase getLandingPage error: " . $e->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Upsert Landing Page
+     */
+    public function upsertLandingPage(string $id, array $data): bool
+    {
+        try {
+            $response = $this->client()->withHeaders(array_merge($this->catalogHeaders(), [
+                'Prefer' => 'resolution=merge-duplicates',
+            ]))->post("{$this->catalogUrl}/rest/v1/cb_landing_pages", [
+                'id' => $id,
+                'data' => $data,
+            ]);
+
+            return $response->successful();
+        } catch (\Exception $e) {
+            Log::error("Supabase upsertLandingPage error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Delete Landing Page
+     */
+    public function deleteLandingPage(string $id): bool
+    {
+        try {
+            $response = $this->client()->withHeaders($this->catalogHeaders())
+                ->delete("{$this->catalogUrl}/rest/v1/cb_landing_pages?id=eq.{$id}");
+
+            return $response->successful();
+        } catch (\Exception $e) {
+            Log::error("Supabase deleteLandingPage error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /* ──────────────────────────────────────────────────────────
        ORDERS APIS (ORDERS DB)
        ────────────────────────────────────────────────────────── */
 

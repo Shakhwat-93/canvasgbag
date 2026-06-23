@@ -23,6 +23,22 @@ class StoreController extends Controller
      */
     public function home()
     {
+        // Check if the current host matches a custom domain mapped to a landing page
+        $host = request()->getHost();
+        if ($host && !in_array($host, ['localhost', '127.0.0.1'])) {
+            $landingPages = Cache::remember('cb_landing_pages', 300, function () {
+                return $this->supabase->getLandingPages();
+            });
+
+            $matchedLp = collect($landingPages)->first(function ($lp) use ($host) {
+                return ($lp['custom_domain'] ?? '') === $host;
+            });
+
+            if ($matchedLp) {
+                return $this->renderLandingPage($matchedLp['id']);
+            }
+        }
+
         $products = Cache::remember('cb_products', 300, function () {
             return $this->supabase->getCatalogProducts();
         });
@@ -145,6 +161,13 @@ class StoreController extends Controller
         ], [
             'phone.regex' => 'মোবাইল নাম্বারটি অবশ্যই ১১ ডিজিটের হতে হবে এবং ০১ দিয়ে শুরু হতে হবে (যেমন: 01712345678)।',
         ]);
+
+        $gtmId = $request->input('landing_page_gtm_id');
+        if ($gtmId) {
+            session(['landing_page_gtm_id' => $gtmId]);
+        } else {
+            session()->forget('landing_page_gtm_id');
+        }
 
         $name = $request->input('name');
         $phone = $request->input('phone');
@@ -374,6 +397,37 @@ class StoreController extends Controller
         return view('success', [
             'orderId' => $id,
             'order' => $order,
+        ]);
+    }
+
+    /**
+     * Render Landing Page
+     */
+    public function renderLandingPage($slug)
+    {
+        $page = $this->supabase->getLandingPage($slug);
+
+        if (!$page) {
+            abort(404, 'Landing page not found');
+        }
+
+        $products = Cache::remember('cb_products', 300, function () {
+            return $this->supabase->getCatalogProducts();
+        });
+
+        $categories = Cache::remember('cb_categories', 300, function () {
+            return $this->supabase->getCatalogCategories();
+        });
+
+        $settings = Cache::remember('cb_settings', 300, function () {
+            return $this->supabase->getCatalogSettings();
+        });
+
+        return view('landing-page', [
+            'page' => $page,
+            'products' => $products,
+            'categories' => $categories,
+            'settings' => $settings,
         ]);
     }
 }
