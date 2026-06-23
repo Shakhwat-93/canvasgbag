@@ -727,8 +727,6 @@
         document.getElementById("category-modal").classList.remove("hidden");
       }
 
-      }
-
       /* ──────────────────────────────────────────────────────────
          LANDING PAGE BUILDER CONTROLLER LOGIC
          ────────────────────────────────────────────────────────── */
