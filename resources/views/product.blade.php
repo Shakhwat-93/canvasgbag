@@ -17,7 +17,7 @@
 
   <!-- Main product overview -->
   <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.1fr_1.2fr_0.9fr] gap-8 items-start bg-white p-4 sm:p-6 rounded-3xl border border-slate-200/60 shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start bg-white p-4 sm:p-8 rounded-3xl border border-slate-200/60 shadow-sm">
       
       <!-- Column 1: Image Gallery -->
       <div class="space-y-4">
@@ -38,6 +38,16 @@
           <div id="discount-badge" class="{{ $discountPercent > 0 ? '' : 'hidden' }} absolute top-4 left-4 bg-red-600 text-white font-black text-xs px-2.5 py-1 rounded-md shadow-md animate-pulse">
             <span id="discount-percent-text">{{ $discountPercent }}</span>% ছাড়
           </div>
+
+          <!-- Slider Arrow Controls -->
+          @if(!empty($product['images']) && count($product['images']) > 1)
+            <button type="button" onclick="prevGalleryImage()" class="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/80 hover:bg-white border border-slate-200 flex items-center justify-center shadow-md text-slate-700 hover:text-slate-900 transition-all select-none cursor-pointer z-10">
+              <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+            </button>
+            <button type="button" onclick="nextGalleryImage()" class="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/80 hover:bg-white border border-slate-200 flex items-center justify-center shadow-md text-slate-700 hover:text-slate-900 transition-all select-none cursor-pointer z-10">
+              <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            </button>
+          @endif
         </div>
 
         <!-- Thumbnails list -->
@@ -59,152 +69,141 @@
             @endforeach
           </div>
         @endif
-      </div>
-
-      <!-- Column 2: Product purchasing details -->
+            <!-- Column 2: Product purchasing details -->
       <div class="space-y-6">
-        <div class="space-y-2">
-          <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight">
+        <div class="space-y-3 text-left">
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight leading-tight">
             {{ $product['name'] }}
           </h1>
-          
-          <div class="flex items-center gap-1.5 text-xs font-bold text-slate-400">
-            <span>Category:</span>
-            <a href="/category/{{ $product['categorySlug'] ?? $product['category_slug'] ?? 'everyday-totes' }}" class="text-[var(--primary)] hover:underline lowercase font-extrabold">
-              {{ $product['categoryName'] ?? 'Category' }}
-            </a>
-          </div>
 
-          <!-- Pricing row with discount pill -->
-          <div class="flex flex-wrap items-center gap-3 pt-1">
-            <span id="compare-price-container" class="{{ $compareAtPrice > $price ? '' : 'hidden' }} text-sm font-semibold text-slate-400 line-through">
-              <span id="compare-price-val">{{ number_format($compareAtPrice) }}</span> ৳
+          <!-- Pricing block styled like reference screenshot -->
+          <div class="flex items-center gap-3.5 py-1.5 border-y border-slate-100">
+            <span id="compare-price-container" class="{{ $compareAtPrice > $price ? '' : 'hidden' }} text-base font-semibold text-slate-400 line-through">
+              ৳<span id="compare-price-val">{{ number_format($compareAtPrice) }}</span>
             </span>
-            <span class="text-xl sm:text-2xl font-black text-slate-900">
-              <span id="active-price-val">{{ number_format($price) }}</span> ৳
+            <span class="text-3xl font-bold text-[#f95c32]">
+              ৳<span id="active-price-val">{{ number_format($price) }}</span>
             </span>
-            <span id="discount-pill" class="{{ $discountPercent > 0 ? '' : 'hidden' }} bg-red-600 text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-lg shadow-sm">
+            <span id="discount-pill" class="{{ $discountPercent > 0 ? '' : 'hidden' }} bg-[#e53935] text-white text-[11px] font-bold px-2 py-0.5 rounded-md shadow-sm">
               <span id="discount-pill-text">{{ $discountPercent }}</span>% OFF
             </span>
           </div>
         </div>
 
-        <!-- Benefits/Specs Overview -->
-        <div class="border-t border-slate-100 pt-5 space-y-3">
-          <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">🔸 প্রোডাক্টের বৈশিষ্ট্য:</p>
-          <div class="space-y-2">
-            @if(!empty($product['benefits']))
-              @foreach(array_slice($product['benefits'], 0, 3) as $benefit)
-                <div class="flex items-start gap-2.5 text-sm font-semibold text-slate-800 leading-relaxed">
-                  <span class="w-4.5 h-4.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-500 flex items-center justify-center shrink-0 mt-0.5">
-                    <svg class="w-2.5 h-2.5 stroke-[3.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
-                  </span>
-                  <span>{{ $benefit }}</span>
-                </div>
-              @endforeach
-            @endif
-          </div>
-          <button onclick="scrollToDetails()" class="text-xs font-bold text-[var(--primary)] hover:underline cursor-pointer">
-            বিস্তারিত
-          </button>
-        </div>
-
-        <!-- Variants Color Panel -->
+        <!-- Variants Option Cards selection -->
         @if(!empty($product['variants']) && count($product['variants']) > 1)
-          <div class="space-y-3 border-t border-slate-100 pt-5">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Choose Color</p>
-            <div class="flex flex-wrap gap-2">
+          <div class="space-y-2 pt-2 text-left">
+            <p class="text-sm font-medium text-slate-900">বাছাই করুন:</p>
+            <div class="flex flex-wrap gap-2.5">
               @foreach($product['variants'] as $idx => $v)
                 @php
                   $isFirst = ($idx === 0);
+                  $vComparePrice = $v['compareAtPrice'] ?? $v['compare_at_price'] ?? $compareAtPrice;
+                  $vPrice = $v['price'] ?? $price;
+                  $vDiscountPercent = ($vComparePrice > $vPrice) ? round((($vComparePrice - $vPrice) / $vComparePrice) * 100) : 0;
                 @endphp
                 <button
                   type="button"
                   onclick="selectVariant({{ $idx }}, '{{ $v['id'] }}')"
-                  class="variant-select-btn flex h-11 items-center gap-2.5 rounded-full border px-4.5 text-xs font-bold transition-all duration-200 active:scale-[0.97] cursor-pointer {{ $isFirst ? 'border-[var(--primary)] bg-[var(--primary)]/5 text-[var(--primary)] ring-1 ring-[var(--primary)]' : 'border-slate-200 hover:border-slate-350 text-slate-700 bg-white shadow-sm' }}"
+                  class="variant-select-btn flex items-center gap-2 border px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-xs {{ $isFirst ? 'border-[#00d056] bg-white text-slate-900 ring-1 ring-[#00d056]' : 'border-slate-200 hover:border-slate-350 text-slate-800 bg-white' }}"
                   data-variant-id="{{ $v['id'] }}"
                   data-index="{{ $idx }}"
                 >
-                  <span
-                    class="h-3.5 w-3.5 rounded-full border border-slate-200 shadow-sm shrink-0"
-                    style="background-color: {{ $v['colorCode'] ?? $v['color_code'] ?? '#cbd5e1' }}"
-                  ></span>
-                  <span>{{ $v['name'] }}</span>
-                  <svg class="v-check-icon h-3.5 w-3.5 text-[var(--primary)] shrink-0 {{ $isFirst ? '' : 'hidden' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                  <span class="text-slate-900">{{ $v['name'] }}</span>
+                  @if($vDiscountPercent > 0)
+                    <span class="bg-red-50 text-red-650 text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0">
+                      {{ $vDiscountPercent }}% OFF
+                    </span>
+                  @endif
                 </button>
               @endforeach
             </div>
           </div>
         @endif
 
-        <!-- Qty & Action buttons -->
-        <div class="space-y-3.5 pt-4 border-t border-slate-100">
-          <div class="flex gap-3.5 w-full items-center">
-            <!-- Qty selector -->
-            <div class="flex items-center border border-slate-200/80 rounded-full h-12 bg-slate-50/50 w-[110px] sm:w-28 shrink-0 justify-between px-1 shadow-sm">
-              <button onclick="decrementQty()" type="button" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-200/50 font-bold text-base transition-colors cursor-pointer text-slate-500 active:scale-90">-</button>
-              <span id="product-qty-badge" class="font-bold text-sm text-slate-800">1</span>
-              <button onclick="incrementQty()" type="button" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-200/50 font-bold text-base transition-colors cursor-pointer text-slate-500 active:scale-90">+</button>
+        <!-- Qty & Action buttons styled like reference screenshot -->
+        <div class="space-y-4 pt-3 border-t border-slate-100">
+          <div class="flex flex-col gap-4">
+            
+            <!-- Quantity selector (Outlined 3-compartment box) -->
+            <div class="flex items-center select-none">
+              <div class="flex items-center bg-white border border-slate-300 rounded-lg h-9 w-28 overflow-hidden">
+                <button onclick="decrementQty()" type="button" class="w-9 h-full flex items-center justify-center font-bold text-slate-600 hover:bg-slate-50 border-r border-slate-300 transition-colors cursor-pointer active:bg-slate-100 text-lg">-</button>
+                <span id="product-qty-badge" class="font-bold text-sm text-slate-900 flex-1 text-center">1</span>
+                <button onclick="incrementQty()" type="button" class="w-9 h-full flex items-center justify-center font-bold text-slate-600 hover:bg-slate-50 border-l border-slate-300 transition-colors cursor-pointer active:bg-slate-100 text-lg">+</button>
+              </div>
             </div>
 
-            <!-- Add to cart -->
-            <button
-              id="btn-add-to-cart"
-              onclick="triggerAddToCart()"
-              type="button"
-              class="flex-1 h-12 bg-[#1E293B] hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-full flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer shadow-sm"
-            >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-              <span id="add-to-cart-text">ADD TO CART</span>
-            </button>
+            <!-- 2x2 Buttons Grid -->
+            <div class="grid grid-cols-2 gap-3">
+              <!-- Add to Cart (Outlined) -->
+              <button
+                id="btn-add-to-cart"
+                onclick="triggerAddToCart()"
+                type="button"
+                class="h-12 border border-slate-900 hover:bg-slate-50 text-slate-900 font-bold text-sm rounded-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+              >
+                কার্টে যোগ করুন
+              </button>
 
-            <!-- Buy Now (Desktop only inside grid) -->
-            <button
-              id="btn-buy-now"
-              onclick="triggerBuyNow()"
-              type="button"
-              class="hidden sm:flex flex-1 h-12 bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 font-black text-xs uppercase tracking-wider rounded-full items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer shadow-md shadow-primary/15"
-            >
-              <svg class="w-4 h-4 fill-current" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              <span id="buy-now-text">BUY NOW</span>
-            </button>
-          </div>
+              <!-- Order Now (Solid Orange-Red) -->
+              <button
+                id="btn-buy-now"
+                onclick="triggerBuyNow()"
+                type="button"
+                class="h-12 bg-[#f95c32] hover:bg-[#e04f27] text-white font-bold text-sm rounded-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer shadow-sm"
+              >
+                <svg class="w-4 h-4 mr-0.5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <span id="buy-now-text">অর্ডার করুন</span>
+              </button>
 
-          <!-- Row 2: Buy Now (Mobile only) -->
-          <button
-            id="btn-buy-now-mobile"
-            onclick="triggerBuyNow()"
-            type="button"
-            class="flex sm:hidden w-full h-12 bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-95 font-black text-xs uppercase tracking-wider rounded-full items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer shadow-md shadow-primary/15"
-          >
-            <svg class="w-4 h-4 fill-current" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            <span id="buy-now-mobile-text">BUY NOW</span>
-          </button>
-        </div>
-      </div>
+              <!-- Order via WhatsApp -->
+              <a
+                id="btn-whatsapp-order"
+                href="https://wa.me/{{ preg_replace('/\D/', '', $settings['phone'] ?? '01942212267') }}?text={{ rawurlencode('আসসালামু আলাইকুম, আমি এই প্রোডাক্টটি অর্ডার করতে চাই: ' . $product['name'] . ' (দাম: ' . $product['price'] . ' টাকা)') }}"
+                target="_blank"
+                class="h-12 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold text-sm rounded-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer shadow-sm"
+              >
+                <svg class="w-4.5 h-4.5 fill-current shrink-0" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.5-5.787-1.455L0 24zm6.09-3.921c1.65.981 3.265 1.502 4.908 1.503 5.432.002 9.851-4.42 9.855-9.86.002-2.63-1.019-5.101-2.876-6.96C16.177 2.9 13.702 1.88 11.069 1.88 5.637 1.88 1.219 6.302 1.215 11.741c-.002 1.685.443 3.329 1.292 4.796L1.472 21.09l4.675-1.226z"/></svg>
+                হোয়াটসঅ্যাপে অর্ডার করুন
+              </a>
 
-      <!-- Column 3: Trust Panel / Delivery details -->
-      <div class="space-y-4">
-        <div class="relative aspect-video rounded-xl bg-slate-900 border border-white/5 overflow-hidden flex flex-col items-center justify-center shadow-sm">
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col items-center justify-center text-center p-3">
-            <span class="w-10 h-10 rounded-full bg-[var(--primary)]/20 border border-[var(--primary)]/20 text-[var(--primary)] flex items-center justify-center shadow-lg transition-transform hover:scale-105 cursor-pointer">
-              <svg class="w-4.5 h-4.5 fill-current" fill="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-            </span>
-            <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest mt-2.5">Original Quality</span>
-            <p class="text-[9px] text-slate-400 mt-1">100% genuine canvas travel & workout carrier bags</p>
+              <!-- Direct Call to Order -->
+              <a
+                href="tel:{{ $settings['phone'] ?? '01942212267' }}"
+                class="h-12 border border-slate-900 hover:bg-slate-50 text-slate-900 font-bold text-sm rounded-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] cursor-pointer"
+              >
+                কল অর্ডার: {{ $settings['phone'] ?? '09678812525' }}
+              </a>
+            </div>
           </div>
         </div>
 
-        <div class="border-2 border-dashed border-slate-200/80 bg-slate-50/50 p-5 rounded-2xl space-y-4 text-xs font-semibold text-slate-700 leading-relaxed shadow-[inset_0_2px_4px_rgba(0,0,0,0.01)]">
+        <!-- Category Link relocated at bottom -->
+        <div class="text-xs font-bold text-slate-500 pt-1 text-left">
+          ক্যাটাগরি: <a href="/category/{{ $product['categorySlug'] ?? $product['category_slug'] ?? 'everyday-totes' }}" class="text-slate-800 hover:underline">{{ $product['categoryName'] ?? 'Category' }}</a>
+        </div>
+
+        <!-- Trust Guidelines Block -->
+        <div class="border border-dashed border-slate-200 bg-slate-50/50 p-4.5 rounded-xl space-y-4 text-xs font-semibold text-slate-700 leading-relaxed text-left">
           <div class="space-y-1">
             <p class="text-slate-900 font-bold text-sm flex items-center gap-1.5">🛵 ডেলিভারি চার্জ:</p>
-            <p class="text-xs pl-6 text-slate-700 font-medium leading-normal">ঢাকার মধ্যে {{ $settings['shippingInsideDhaka'] ?? 60 }} টাকা, ঢাকার বাইরে {{ $settings['shippingOutsideDhaka'] ?? 130 }} টাকা!</p>
+            <p class="text-xs pl-6 text-slate-750 font-medium leading-normal">ঢাকার মধ্যে {{ $settings['shippingInsideDhaka'] ?? 60 }} টাকা, ঢাকার বাইরে {{ $settings['shippingOutsideDhaka'] ?? 130 }} টাকা!</p>
           </div>
           <div class="space-y-1">
             <p class="text-slate-900 font-bold text-sm flex items-center gap-1.5">💵 সম্পূর্ণ ক্যাশ অন ডেলিভারি:</p>
-            <p class="text-xs pl-6 text-slate-700 font-medium leading-normal">অর্ডার করতে অগ্রিম ১ টাকাও দিতে হবেনা, পণ্য রিসিভ করার সময় টাকা পরিশোধ করবেন!</p>
+            <p class="text-xs pl-6 text-slate-750 font-medium leading-normal">অর্ডার করতে অগ্রিম ১ টাকাও দিতে হবেনা, পণ্য রিসিভ করার সময় টাকা পরিশোধ করবেন!</p>
           </div>
           <div class="space-y-1">
+            <p class="text-slate-900 font-bold text-sm flex items-center gap-1.5">🔎 প্রোডাক্ট চেক করে নেওয়ার সুযোগ:</p>
+            <p class="text-xs pl-6 text-slate-750 font-medium leading-normal">ডেলিভারি ম্যানের সামনে পণ্য ভালোভাবে দেখে তারপর রিসিভ করতে পারবেন।</p>
+          </div>
+        </div>
+      </div>�েওয়ার সুযোগ:</p>
+            <p class="text-xs pl-6 text-slate-700 font-medium leading-normal">ডেলিভারি ম্যানের সামনে পণ্য ভালোভাবে দেখে তারপর রিসিভ করতে পারবেন।</p>
+          </div>
+        </div>
+      </div>class="space-y-1">
             <p class="text-slate-900 font-bold text-sm flex items-center gap-1.5">🔎 প্রোডাক্ট চেক করে নেওয়ার সুযোগ:</p>
             <p class="text-xs pl-6 text-slate-700 font-medium leading-normal">ডেলিভারি ম্যানের সামনে পণ্য ভালোভাবে দেখে তারপর রিসিভ করতে পারবেন।</p>
           </div>
@@ -323,6 +322,10 @@
   window.addEventListener('DOMContentLoaded', () => {
     fireViewItemEvent();
     updateStockUI();
+    // Initialize variant details on load
+    if (productData.variants && productData.variants.length > 0) {
+      selectVariant(0, productData.variants[0].id, false);
+    }
   });
 
   function fireViewItemEvent() {
@@ -368,6 +371,24 @@
     }
   }
 
+  function prevGalleryImage() {
+    if (!productData.images || productData.images.length <= 1) return;
+    let idx = activeImageIdx - 1;
+    if (idx < 0) {
+      idx = productData.images.length - 1;
+    }
+    selectGalleryImage(idx);
+  }
+
+  function nextGalleryImage() {
+    if (!productData.images || productData.images.length <= 1) return;
+    let idx = activeImageIdx + 1;
+    if (idx >= productData.images.length) {
+      idx = 0;
+    }
+    selectGalleryImage(idx);
+  }
+
   // Variant select controls
   function selectVariant(idx, variantId, syncGallery = true) {
     selectedVariantIndex = idx;
@@ -377,15 +398,53 @@
     const variantButtons = document.querySelectorAll(".variant-select-btn");
     variantButtons.forEach(btn => {
       const bIdx = parseInt(btn.getAttribute("data-index"), 10);
-      const checkIcon = btn.querySelector(".v-check-icon");
       if (bIdx === idx) {
-        btn.className = "variant-select-btn flex h-11 items-center gap-2.5 rounded-full border px-4.5 text-xs font-bold transition-all duration-200 active:scale-[0.97] cursor-pointer border-[var(--primary)] bg-[var(--primary)]/5 text-[var(--primary)] ring-1 ring-[var(--primary)]";
-        if (checkIcon) checkIcon.classList.remove("hidden");
+        btn.className = "variant-select-btn flex items-center gap-2 border px-4 py-2 rounded-md text-sm font-bold transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-xs border-[#00d056] bg-white text-slate-900 ring-1 ring-[#00d056]";
       } else {
-        btn.className = "variant-select-btn flex h-11 items-center gap-2.5 rounded-full border px-4.5 text-xs font-bold transition-all duration-200 active:scale-[0.97] cursor-pointer border-slate-200 hover:border-slate-350 text-slate-700 bg-white shadow-sm";
-        if (checkIcon) checkIcon.classList.add("hidden");
+        btn.className = "variant-select-btn flex items-center gap-2 border px-4 py-2 rounded-md text-sm font-bold transition-all duration-200 active:scale-[0.98] cursor-pointer shadow-xs border-slate-200 hover:border-slate-350 text-slate-800 bg-white";
       }
     });
+
+    // Update dynamic prices and badges
+    const activePrice = (activeVariant && activeVariant.price) ? activeVariant.price : productData.price;
+    const activeComparePrice = (activeVariant && (activeVariant.compareAtPrice || activeVariant.compare_at_price)) ? (activeVariant.compareAtPrice || activeVariant.compare_at_price) : (productData.compareAtPrice || productData.compare_at_price || 0);
+
+    const activePriceEl = document.getElementById("active-price-val");
+    if (activePriceEl) {
+      activePriceEl.textContent = Number(activePrice).toLocaleString();
+    }
+
+    const comparePriceEl = document.getElementById("compare-price-val");
+    const compareContainerEl = document.getElementById("compare-price-container");
+    if (comparePriceEl && compareContainerEl) {
+      if (activeComparePrice > activePrice) {
+        comparePriceEl.textContent = Number(activeComparePrice).toLocaleString();
+        compareContainerEl.classList.remove("hidden");
+      } else {
+        compareContainerEl.classList.add("hidden");
+      }
+    }
+
+    const discountPillEl = document.getElementById("discount-pill");
+    const discountTextEl = document.getElementById("discount-pill-text");
+    if (discountPillEl && discountTextEl) {
+      if (activeComparePrice > activePrice) {
+        const discountPercent = Math.round(((activeComparePrice - activePrice) / activeComparePrice) * 100);
+        discountTextEl.textContent = discountPercent;
+        discountPillEl.classList.remove("hidden");
+      } else {
+        discountPillEl.classList.add("hidden");
+      }
+    }
+
+    // Update WhatsApp link dynamic pre-fill parameters
+    const waBtn = document.getElementById("btn-whatsapp-order");
+    if (waBtn) {
+      const activeVariantName = activeVariant ? activeVariant.name : "Standard";
+      const waPhone = "{{ preg_replace('/\D/', '', $settings['phone'] ?? '01942212267') }}";
+      const waText = `আসসালামু আলাইকুম, আমি এই প্রোডাক্টটি অর্ডার করতে চাই: ${productData.name} (বাছাই: ${activeVariantName}, দাম: ${activePrice} টাকা)`;
+      waBtn.href = `https://wa.me/${waPhone}?text=${encodeURIComponent(waText)}`;
+    }
 
     // Sync main gallery image
     if (syncGallery && activeVariant && activeVariant.image) {
@@ -405,24 +464,27 @@
 
     const btnAdd = document.getElementById("btn-add-to-cart");
     const btnBuy = document.getElementById("btn-buy-now");
-    const btnBuyMobile = document.getElementById("btn-buy-now-mobile");
 
     if (isOutOfStock) {
-      document.getElementById("add-to-cart-text").textContent = "STOCK OUT";
-      document.getElementById("buy-now-text").textContent = "STOCK OUT";
-      document.getElementById("buy-now-mobile-text").textContent = "STOCK OUT";
-      
-      [btnAdd, btnBuy, btnBuyMobile].forEach(btn => {
-        if(btn) btn.disabled = true;
-      });
+      if(btnAdd) {
+        btnAdd.disabled = true;
+        btnAdd.textContent = "STOCK OUT";
+      }
+      if(btnBuy) {
+        btnBuy.disabled = true;
+        const buySpan = btnBuy.querySelector("#buy-now-text");
+        if(buySpan) buySpan.textContent = "STOCK OUT";
+      }
     } else {
-      document.getElementById("add-to-cart-text").textContent = "ADD TO CART";
-      document.getElementById("buy-now-text").textContent = "BUY NOW";
-      document.getElementById("buy-now-mobile-text").textContent = "BUY NOW";
-      
-      [btnAdd, btnBuy, btnBuyMobile].forEach(btn => {
-        if(btn) btn.disabled = false;
-      });
+      if(btnAdd) {
+        btnAdd.disabled = false;
+        btnAdd.textContent = "কার্টে যোগ করুন";
+      }
+      if(btnBuy) {
+        btnBuy.disabled = false;
+        const buySpan = btnBuy.querySelector("#buy-now-text");
+        if(buySpan) buySpan.textContent = "অর্ডার করুন";
+      }
     }
   }
 
@@ -448,7 +510,7 @@
       slug: productData.slug,
       name: productData.name,
       image: (activeVariant && activeVariant.image) ? activeVariant.image : (productData.images[0]?.url || ""),
-      price: productData.price,
+      price: (activeVariant && activeVariant.price) ? activeVariant.price : productData.price,
       variantId: activeVariant ? activeVariant.id : 'standard',
       variantName: activeVariant ? activeVariant.name : 'Standard',
       quantity: activeQty
@@ -461,7 +523,7 @@
       slug: productData.slug,
       name: productData.name,
       image: (activeVariant && activeVariant.image) ? activeVariant.image : (productData.images[0]?.url || ""),
-      price: productData.price,
+      price: (activeVariant && activeVariant.price) ? activeVariant.price : productData.price,
       variantId: activeVariant ? activeVariant.id : 'standard',
       variantName: activeVariant ? activeVariant.name : 'Standard',
       quantity: activeQty
