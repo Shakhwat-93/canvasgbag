@@ -128,7 +128,7 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="flex-1 w-full max-w-full overflow-x-hidden pt-[110px]">
+    <main class="flex-1 w-full max-w-full overflow-x-hidden pt-[140px] md:pt-[110px] pb-16 md:pb-0">
         @yield('content')
     </main>
 
@@ -137,6 +137,58 @@
 
     <!-- Toast Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-[200] flex flex-col gap-2.5 max-w-sm pointer-events-none"></div>
+
+    <!-- Floating Mobile Cart Widget (Visible on mobile/tablet, hidden on desktop) -->
+    <button
+      onclick="toggleCartDrawer(true)"
+      class="md:hidden fixed right-0 top-1/2 -translate-y-1/2 z-40 bg-[#f95c32] hover:bg-[#e04f27] text-white flex flex-col items-center justify-center w-14 py-3 rounded-l-xl shadow-lg border border-r-0 border-white/20 active:scale-95 transition-all select-none cursor-pointer"
+    >
+      <svg class="w-6 h-6 stroke-current fill-none mb-1" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      <span class="text-[9px] font-black uppercase tracking-wider leading-none text-center">
+        <span class="widget-cart-count">0</span> ITEMS
+      </span>
+      <span class="mt-2 bg-white text-[#f95c32] text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm leading-none">
+        ৳<span class="widget-cart-total">0</span>
+      </span>
+    </button>
+
+    <!-- Mobile Sticky Bottom Navigation (Visible on mobile, hidden on desktop) -->
+    <div class="block md:hidden fixed bottom-0 inset-x-0 z-40 bg-[#f95c32] border-t border-white/10 shadow-[0_-4px_16px_rgba(0,0,0,0.08)]">
+      <div class="grid grid-cols-5 h-14 w-full">
+        <!-- Home -->
+        <a href="/" class="flex flex-col items-center justify-center text-white active:scale-95 transition-transform">
+          <svg class="w-5.5 h-5.5 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span class="text-[10px] font-bold mt-1">হোম</span>
+        </a>
+
+        <!-- Categories -->
+        <a href="/shop" class="flex flex-col items-center justify-center text-white active:scale-95 transition-transform">
+          <svg class="w-5.5 h-5.5 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+          <span class="text-[10px] font-bold mt-1">ক্যাটাগরি</span>
+        </a>
+
+        <!-- Cart -->
+        <button onclick="toggleCartDrawer(true)" class="flex flex-col items-center justify-center text-white active:scale-95 transition-transform cursor-pointer">
+          <div class="relative">
+            <svg class="w-5.5 h-5.5 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            <span id="mobile-nav-cart-badge" class="widget-cart-count absolute -top-1 -right-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-white text-[#f95c32] text-[8px] font-black leading-none">0</span>
+          </div>
+          <span class="text-[10px] font-bold mt-1">কার্ট</span>
+        </button>
+
+        <!-- Search -->
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'}); document.querySelector('input[name=search]')?.focus();" class="flex flex-col items-center justify-center text-white active:scale-95 transition-transform cursor-pointer">
+          <svg class="w-5.5 h-5.5 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span class="text-[10px] font-bold mt-1">খুঁজুন</span>
+        </button>
+
+        <!-- Admin -->
+        <a href="/admin" class="flex flex-col items-center justify-center text-white active:scale-95 transition-transform">
+          <svg class="w-5.5 h-5.5 stroke-current fill-none" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          <span class="text-[10px] font-bold mt-1">অ্যাডমিন</span>
+        </a>
+      </div>
+    </div>
 
     <!-- Core Scripts -->
     <script src="/assets/js/analytics.js?v={{ filemtime(public_path('assets/js/analytics.js')) }}"></script>

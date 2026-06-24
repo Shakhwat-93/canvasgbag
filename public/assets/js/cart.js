@@ -160,6 +160,7 @@ function toggleMobileShop() {
 function updateCartUI() {
   const items = getCartItems();
   const count = items.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   // Update header badges
   const badges = document.querySelectorAll("#cart-count-badge");
@@ -171,6 +172,24 @@ function updateCartUI() {
       badge.classList.add("hidden");
     }
   });
+
+  // Update mobile cart badge
+  const mobileCartBadge = document.getElementById("mobile-cart-badge");
+  if (mobileCartBadge) {
+    if (count > 0) {
+      mobileCartBadge.textContent = count;
+      mobileCartBadge.classList.remove("hidden");
+    } else {
+      mobileCartBadge.classList.add("hidden");
+    }
+  }
+
+  // Update floating widget
+  const widgetCounts = document.querySelectorAll(".widget-cart-count");
+  widgetCounts.forEach(el => el.textContent = count);
+  
+  const widgetTotals = document.querySelectorAll(".widget-cart-total");
+  widgetTotals.forEach(el => el.textContent = Number(subtotal).toLocaleString());
 
   // Re-render items in active views
   renderCartDrawerItems();

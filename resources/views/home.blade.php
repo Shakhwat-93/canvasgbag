@@ -40,27 +40,30 @@
     </svg>
 
     <!-- Hero Section -->
-    <section class="relative mx-auto w-full max-w-[1440px] px-4 pt-16 sm:pt-6 pb-8 sm:px-6 lg:px-8 overflow-hidden bg-white text-slate-800">
-        @if(!empty($settings['heroMobileFourCards']))
-            <!-- Mobile 2x2 Bento Grid -->
-            <div class="grid grid-cols-2 gap-3.5 sm:hidden mt-1.5 px-0.5">
-                <div class="relative w-full aspect-[3/4.2] rounded-2xl overflow-hidden bg-[#FF6B35] border border-slate-100/50">
-                    <img src="{{ $settings['heroImage1'] ?? '/brand/hero_orange_model.webp' }}" alt="Model" class="absolute inset-0 h-full w-full object-cover object-center" />
-                </div>
-                <div class="relative w-full aspect-[3/4.2] rounded-2xl overflow-hidden bg-[#4E9F3D] border border-slate-100/50">
-                    <img src="{{ $settings['heroImage3'] ?? '/brand/hero_green_model.webp' }}" alt="Model" class="absolute inset-0 h-full w-full object-cover object-center" />
-                </div>
-                <div class="relative w-full aspect-[3/4.2] rounded-2xl overflow-hidden bg-[#FFCC00] border border-slate-100/50">
-                    <img src="{{ $settings['heroImage4'] ?? '/brand/hero_yellow_model.webp' }}" alt="Model" class="absolute inset-0 h-full w-full object-cover object-center" />
-                </div>
-                <div class="relative w-full aspect-[3/4.2] rounded-2xl overflow-hidden bg-[#88D49E] border border-slate-100/50">
-                    <img src="{{ $settings['heroImage6'] ?? '/brand/hero_mint_model.webp' }}" alt="Model" class="absolute inset-0 h-full w-full object-cover object-center" />
-                </div>
+    <section class="relative mx-auto w-full max-w-[1440px] px-4 pt-6 pb-6 sm:px-6 lg:px-8 overflow-hidden bg-white text-slate-800">
+        <!-- Mobile Image Carousel (Visible on mobile, hidden on desktop) -->
+        <div class="relative sm:hidden w-full aspect-[16/9.5] rounded-2xl overflow-hidden shadow-md">
+          <div id="mobile-hero-slider" class="flex transition-transform duration-500 h-full w-full">
+            <div class="w-full h-full shrink-0 relative">
+              <img src="/brand/hero_orange_model.webp" alt="Promo" class="absolute inset-0 w-full h-full object-cover" />
             </div>
-        @endif
+            <div class="w-full h-full shrink-0 relative">
+              <img src="/brand/hero_green_model.webp" alt="Promo" class="absolute inset-0 w-full h-full object-cover" />
+            </div>
+            <div class="w-full h-full shrink-0 relative">
+              <img src="/brand/hero_yellow_model.webp" alt="Promo" class="absolute inset-0 w-full h-full object-cover" />
+            </div>
+          </div>
+          <!-- Dots indicators -->
+          <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+            <span class="mobile-slider-dot h-2 w-2 rounded-full bg-white opacity-100 transition-opacity"></span>
+            <span class="mobile-slider-dot h-2 w-2 rounded-full bg-white opacity-40 transition-opacity"></span>
+            <span class="mobile-slider-dot h-2 w-2 rounded-full bg-white opacity-40 transition-opacity"></span>
+          </div>
+        </div>
 
-        <!-- Bento Grid Container -->
-        <div class="{{ !empty($settings['heroMobileFourCards']) ? 'hidden sm:grid' : 'grid' }} grid-cols-5 gap-2 sm:gap-6 items-start px-0.5 sm:px-1 mt-0">
+        <!-- Bento Grid Container (Desktop & Tablet) -->
+        <div class="hidden sm:grid grid-cols-5 gap-2 sm:gap-6 items-start px-0.5 sm:px-1 mt-0">
             <!-- Column 1 -->
             <div class="flex flex-col gap-2 sm:gap-6 mt-0.5 sm:mt-3">
                 <div class="relative w-full aspect-[3/7.2] sm:aspect-[3/3.8] overflow-hidden bg-[#FF6B35] cursor-pointer group filter drop-shadow-[0_6px_10px_rgba(0,0,0,0.04)] hover:drop-shadow-[0_16px_24px_rgba(0,0,0,0.08)] transition-all duration-300" style="clip-path: url(#folder-left)">
@@ -108,23 +111,34 @@
                 </div>
             </div>
         </div>
-
-        <!-- Mobile-only CTA -->
-        <div class="lg:hidden mt-6 flex justify-center w-full">
-            <a href="/category/everyday-totes" class="inline-block">
-                <button class="bg-black text-white hover:bg-black/90 active:scale-[0.98] transition-all duration-300 rounded-full py-3 px-8 font-bold text-xs flex items-center justify-center gap-1.5 group shadow-md cursor-pointer">
-                    Shop Now
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="w-3.5 h-3.5 text-[#86E237] group-hover:translate-x-1 transition-transform duration-300"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12,5 19,12 12,19" /></svg>
-                </button>
-            </a>
-        </div>
     </section>
 
+    <!-- Flash Sale & Stats Bar (Mobile and Desktop) -->
+    <div class="bg-[#121212] py-4 px-4 text-center select-none shadow-inner w-full">
+      <div class="mx-auto max-w-md flex flex-col items-center gap-2.5">
+        <!-- Stats line -->
+        <div class="flex items-center gap-2 text-white text-xs font-bold tracking-wide">
+          <span class="h-2 w-2 rounded-full bg-[#f95c32] animate-ping shrink-0"></span>
+          <span>আজ ৩৪৭ জন অর্ডার করেছেন</span>
+        </div>
+        <!-- Flash Deal countdown pill -->
+        <div class="inline-flex items-center gap-1.5 px-4.5 py-1.5 rounded-full bg-[#f95c32]/10 border border-[#f95c32]/30 text-white text-xs font-bold">
+          <span class="text-orange-500 font-extrabold animate-pulse">⚡</span>
+          <span>ফ্ল্যাশ ডিল অফার শেষ হবে:</span>
+          <span id="flash-deal-timer" class="font-extrabold tracking-widest text-[#f95c32] font-mono ml-0.5">05:59:56</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Featured Categories Section -->
-    <section class="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <section class="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div class="flex flex-col items-center mb-10 text-center">
+            <!-- Categories Button Badge -->
+            <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border border-[#f95c32]/25 bg-[#f95c32]/5 text-[#f95c32] text-xs font-bold uppercase tracking-wider select-none mb-3">
+                <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Categories
+            </span>
             <h2 class="text-xl md:text-2xl font-black text-slate-900 tracking-tight">Featured Categories</h2>
-            <span class="mt-2.5 h-1 w-12 rounded bg-[var(--primary)]" />
         </div>
 
         <!-- Scrollable Category Row -->
@@ -269,4 +283,53 @@
             </div>
         </section>
     @endif
+@endsection
+
+
+@section('scripts')
+<script>
+// Mobile slider carousel
+document.addEventListener("DOMContentLoaded", () => {
+  const slider = document.getElementById("mobile-hero-slider");
+  const dots = document.querySelectorAll(".mobile-slider-dot");
+  if (!slider || dots.length === 0) return;
+
+  let activeIdx = 0;
+  const slideCount = dots.length;
+  
+  setInterval(() => {
+    activeIdx = (activeIdx + 1) % slideCount;
+    slider.style.transform = `translateX(-${activeIdx * 100}%)`;
+    dots.forEach((dot, idx) => {
+      dot.className = `mobile-slider-dot h-2 w-2 rounded-full bg-white transition-opacity ${idx === activeIdx ? 'opacity-100' : 'opacity-40'}`;
+    });
+  }, 3500);
+});
+
+// Start countdown timer on load
+document.addEventListener("DOMContentLoaded", () => {
+  const timerEl = document.getElementById("flash-deal-timer");
+  if (!timerEl) return;
+
+  let hours = 5, minutes = 59, seconds = 56;
+  setInterval(() => {
+    seconds--;
+    if (seconds < 0) {
+      seconds = 59;
+      minutes--;
+      if (minutes < 0) {
+        minutes = 59;
+        hours--;
+        if (hours < 0) {
+          hours = 5; // Reset to 6 hours
+        }
+      }
+    }
+    const h = String(hours).padStart(2, '0');
+    const m = String(minutes).padStart(2, '0');
+    const s = String(seconds).padStart(2, '0');
+    timerEl.textContent = `${h}:${m}:${s}`;
+  }, 1000);
+});
+</script>
 @endsection

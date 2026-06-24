@@ -1,4 +1,42 @@
-<header class="flex justify-center px-4 pb-3 pt-2">
+<!-- Mobile Header (Visible on mobile, hidden on desktop) -->
+<div class="block md:hidden bg-white border-b border-slate-100 px-4 py-3.5 w-full shadow-xs">
+  <!-- Row 1: Logo & Icons -->
+  <div class="flex items-center justify-between">
+    <!-- Logo -->
+    <a href="/" class="flex shrink-0 items-center gap-2" aria-label="CanvasBag home">
+      <span class="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-black">
+        <img src="/brand/logo.webp" alt="CanvasBag" width="26" height="26" class="object-contain" />
+      </span>
+      <span class="text-sm font-bold tracking-tight text-slate-900">CanvasBag</span>
+    </a>
+    
+    <!-- Cart & Menu Buttons -->
+    <div class="flex items-center gap-2">
+      <!-- Cart Button (Circular) -->
+      <button onclick="toggleCartDrawer(true)" class="relative h-10 w-10 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-700 active:scale-95 transition-all cursor-pointer">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        <span id="mobile-cart-badge" class="absolute -top-1 -right-1 hidden grid h-5 min-w-5 place-items-center rounded-full bg-[#f95c32] px-1 text-[10px] font-bold text-white border border-white">0</span>
+      </button>
+
+      <!-- Menu Button (Circular) -->
+      <button onclick="toggleMobileMenu(true)" class="h-10 w-10 rounded-full bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-700 active:scale-95 transition-all cursor-pointer" aria-label="Open menu">
+        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Row 2: Search Bar -->
+  <div class="mt-3">
+    <form action="/shop" method="GET" class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden h-10 shadow-xs">
+      <input type="text" name="search" placeholder="পণ্য খুঁজুন..." class="flex-1 px-3 text-sm focus:outline-none text-slate-800 font-medium" />
+      <button type="submit" class="h-full px-4.5 bg-[#f95c32] hover:bg-[#e04f27] text-white flex items-center justify-center transition-colors cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </button>
+    </form>
+  </div>
+</div>
+
+<header class="hidden md:flex justify-center px-4 pb-3 pt-2">
   <!-- Floating pill container -->
   <div class="flex w-full max-w-4xl items-center justify-between gap-4 rounded-full border border-white/60 bg-white/80 px-3 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.10)] backdrop-blur-2xl" style="WebkitBackdropFilter: blur(24px)">
     <!-- Logo -->
